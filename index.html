@@ -1,469 +1,69 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Real Money: Live Game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'casino-green': '#0b1d13',
-                        'casino-gold': '#D4AF37',
-                        'casino-yellow': '#FFFF00',
-                        'casino-dark': '#07120a',
-                        'casino-red': '#7a0d10'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background: #0b1d13;
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow-x: hidden;
-            user-select: none;
-            padding-top: 76px;
-        }
-        ::-webkit-scrollbar { display: none; }
-
-        .profile-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 76px;
-            z-index: 100;
-            background: rgba(7, 18, 10, 0.98);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-        }
-
-        .page-container { padding-bottom: 2rem; }
-        .page-container:not(.active) { display: none !important; }
-        .page-container.active { animation: fadeIn 0.25s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .profile-photo {
-            width: 44px;
-            height: 44px;
-            border-radius: 999px;
-            object-fit: cover;
-            border: 1px solid #D4AF37;
-            background: #1a241d;
-            flex-shrink: 0;
-        }
-
-        .back-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 999px;
-            background: rgba(0,0,0,0.45);
-            border: 1px solid rgba(212,175,55,0.5);
-            color: #D4AF37;
-            transition: all 0.15s ease;
-            flex-shrink: 0;
-        }
-        .back-btn:active {
-            transform: scale(0.92);
-            background: rgba(212,175,55,0.2);
-        }
-
-        .balance-box {
-            min-width: 78px;
-            padding: 6px 9px;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.35);
-            border: 1px solid rgba(212,175,55,0.35);
-            text-align: right;
-        }
-
-        .btn-gold {
-            background: linear-gradient(145deg, #2a2a2a, #151515);
-            border: 1px solid #D4AF37;
-            color: #D4AF37;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-            transition: all 0.2s ease;
-        }
-        .btn-gold:active { transform: scale(0.97); filter: brightness(1.2); }
-
-        .lang-card {
-            background: linear-gradient(135deg, rgba(20,40,28,0.8), rgba(7,18,10,0.9));
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            transition: all 0.2s ease;
-            position: relative;
-        }
-        .lang-card:active {
-            border-color: #D4AF37;
-            background: rgba(212, 175, 55, 0.15);
-            transform: scale(0.95);
-        }
-        .lang-selected {
-            border-color: #D4AF37 !important;
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
-        }
-        .lang-disabled { filter: grayscale(40%) opacity(0.8); }
-
-        .auto-badge {
-            position: absolute;
-            top: -8px;
-            right: -6px;
-            background: #D4AF37;
-            color: black;
-            font-size: 9px;
-            font-weight: bold;
-            padding: 2px 5px;
-            border-radius: 999px;
-            z-index: 10;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#07120a">
+<title>Real Money: Live Game</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{'casino-green':'#0b1d13','casino-gold':'#D4AF37','casino-yellow':'#FFFF00','casino-dark':'#07120a','casino-red':'#7a0d10'}}}};</script>
+<style>
+:root{--tg-safe-top:env(safe-area-inset-top,0px);--tg-safe-bottom:env(safe-area-inset-bottom,0px);--header-height:52px}
+*{-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%}body{background:#0b1d13;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden;user-select:none;-webkit-user-select:none;overscroll-behavior-y:contain;padding-top:calc(var(--header-height) + var(--tg-safe-top));padding-bottom:var(--tg-safe-bottom)}::-webkit-scrollbar{display:none}
+.profile-header{position:fixed;top:var(--tg-safe-top);left:0;right:0;height:var(--header-height);z-index:100;display:flex;align-items:center;padding:0 10px;background:rgba(7,18,10,.98);border-bottom:1px solid rgba(212,175,55,.28);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.profile-user{min-width:0;flex:1;display:flex;align-items:center;gap:7px;overflow:hidden}.profile-photo{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid #D4AF37;background:#1a241d;flex:0 0 34px}.profile-meta{min-width:0;display:flex;flex-direction:column;justify-content:center;line-height:1.05}.profile-name{max-width:132px;font-size:12px;font-weight:700;letter-spacing:.01em}.profile-id{margin-top:2px;font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-weight:700;color:#FFFF00;opacity:.9}.balance-box{min-width:72px;max-width:100px;padding:4px 7px;border-radius:8px;background:rgba(0,0,0,.32);border:1px solid rgba(212,175,55,.28);text-align:right;line-height:1.05;flex:0 0 auto}.balance-label{font-size:8px;color:#9ca3af}.balance-value{font-size:13px;font-weight:800;color:#D4AF37;margin-top:2px;white-space:nowrap}.balance-point{font-size:8px;font-weight:400;color:#d1d5db}
+main{padding:10px 12px 20px}.page-container{padding-bottom:1rem}.page-container:not(.active){display:none!important}.page-container.active{animation:fadeIn .18s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}button,[onclick]{touch-action:manipulation}.btn-gold{min-height:52px;background:linear-gradient(145deg,#292929,#151515);border:1px solid #D4AF37;color:#D4AF37;box-shadow:0 3px 8px rgba(0,0,0,.45);transition:transform .12s ease,filter .12s ease}.btn-gold:active{transform:scale(.985);filter:brightness(1.12)}.main-menu-btn{min-height:60px;padding:12px 14px;border-radius:14px;font-size:18px;font-weight:800}.lang-card{background:linear-gradient(135deg,rgba(20,40,28,.8),rgba(7,18,10,.9));border:1px solid rgba(212,175,55,.26);transition:transform .12s ease,border-color .12s ease,background .12s ease;position:relative}.lang-card:active{border-color:#D4AF37;background:rgba(212,175,55,.14);transform:scale(.97)}.lang-selected{border-color:#D4AF37!important;box-shadow:0 0 10px rgba(212,175,55,.3)}.lang-disabled{filter:grayscale(40%);opacity:.72}.auto-badge{position:absolute;top:5px;right:5px;background:#D4AF37;color:#000;font-size:8px;font-weight:800;padding:2px 4px;border-radius:999px;z-index:10}.page-title{margin-top:4px;margin-bottom:16px}.page-title h2{font-size:18px}.page-title p{font-size:11px}.game-card{border-radius:13px;overflow:hidden}.popup-panel{padding:20px;border-radius:16px;max-width:320px}@media(max-width:360px){main{padding-left:10px;padding-right:10px}.profile-photo{width:32px;height:32px;flex-basis:32px}.profile-name{max-width:105px}.balance-box{min-width:66px;padding-left:6px;padding-right:6px}.main-menu-btn{font-size:17px}}
+</style>
 </head>
 <body class="min-h-screen flex flex-col relative">
-
-    <!-- FIXED PROFILE HEADER -->
-    <header class="profile-header flex items-center px-3 gap-2">
-        <button id="btn-back" onclick="goBack()" class="back-btn flex items-center justify-center text-lg font-bold" style="visibility:hidden;">‹</button>
-
-        <div class="flex items-center gap-2 min-w-0 flex-1">
-            <img id="user-photo" src="" alt="Profile" class="profile-photo">
-            <div class="flex flex-col min-w-0 leading-tight">
-                <span id="user-name" class="font-bold text-sm tracking-wide truncate">Guest</span>
-                <span class="text-[10px] font-mono font-bold text-casino-yellow truncate">
-                    ID: <span id="user-id">000000000</span>
-                </span>
-            </div>
-        </div>
-
-        <div class="balance-box shrink-0">
-            <div id="text-balance" class="text-[10px] text-gray-400">잔액</div>
-            <div class="text-casino-gold font-bold text-base leading-tight">
-                <span id="user-balance">0</span>
-                <span id="text-point" class="text-[10px] font-normal text-gray-300">Point</span>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-1 p-4">
-
-        <!-- [Page 1] 언어 선택 -->
-        <div id="page-lang" class="page-container active flex flex-col items-center mt-4">
-            <div class="text-center mb-6">
-                <h2 class="text-casino-gold text-xl font-bold tracking-wider" id="text-select-lang-title">언어 선택</h2>
-                <p class="text-xs text-gray-400 mt-1" id="text-select-lang-sub">이용하실 언어를 선택해 주세요</p>
-            </div>
-
-            <div class="grid grid-cols-3 gap-3 w-full max-w-sm">
-                <div onclick="setLanguage('ko')" id="card-ko" class="lang-card aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer shadow-md">
-                    <div class="auto-badge" style="display:none;">AUTO</div>
-                    <span class="text-4xl mb-2">🇰🇷</span>
-                    <span class="font-bold text-sm text-white">한국어</span>
-                    <span class="text-[10px] text-casino-gold mt-1">KR</span>
-                </div>
-                <div onclick="setLanguage('cn')" id="card-cn" class="lang-card aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer shadow-md">
-                    <div class="auto-badge" style="display:none;">AUTO</div>
-                    <span class="text-4xl mb-2">🇨🇳</span>
-                    <span class="font-bold text-sm text-white">中文</span>
-                    <span class="text-[10px] text-casino-gold mt-1">CN</span>
-                </div>
-                <div onclick="setLanguage('en')" id="card-en" class="lang-card aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer shadow-md">
-                    <div class="auto-badge" style="display:none;">AUTO</div>
-                    <span class="text-4xl mb-2">🇺🇸</span>
-                    <span class="font-bold text-sm text-white">English</span>
-                    <span class="text-[10px] text-casino-gold mt-1">EN</span>
-                </div>
-                <div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer">
-                    <span class="text-4xl mb-2">🇯🇵</span><span class="font-bold text-sm text-gray-300">日本語</span><span class="text-[10px] text-gray-500 mt-1">JP</span>
-                </div>
-                <div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer">
-                    <span class="text-4xl mb-2">🇪🇸</span><span class="font-bold text-sm text-gray-300">Español</span><span class="text-[10px] text-gray-500 mt-1">ES</span>
-                </div>
-                <div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer">
-                    <span class="text-4xl mb-2">🇷🇺</span><span class="font-bold text-sm text-gray-300">Русский</span><span class="text-[10px] text-gray-500 mt-1">RU</span>
-                </div>
-                <div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer">
-                    <span class="text-4xl mb-2">🇫🇷</span><span class="font-bold text-sm text-gray-300">Français</span><span class="text-[10px] text-gray-500 mt-1">FR</span>
-                </div>
-                <div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer">
-                    <span class="text-4xl mb-2">🇩🇪</span><span class="font-bold text-sm text-gray-300">Deutsch</span><span class="text-[10px] text-gray-500 mt-1">DE</span>
-                </div>
-                <div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer">
-                    <span class="text-4xl mb-2">🇵🇹</span><span class="font-bold text-sm text-gray-300">Português</span><span class="text-[10px] text-gray-500 mt-1">PT</span>
-                </div>
-            </div>
-
-            <button id="proceed-btn" onclick="navigateToMain()" class="mt-8 btn-gold w-full max-w-xs py-3 rounded-xl font-bold text-sm mx-auto block" style="display:none;">
-                확인하여 계속하기 ➜
-            </button>
-        </div>
-
-        <!-- [Page 2] 메인 메뉴 -->
-        <div id="page-main" class="page-container mt-4 space-y-5">
-            <button onclick="navigate('live')" class="btn-gold w-full py-7 rounded-2xl text-2xl font-bold tracking-wide"><span id="text-menu-live">Live Game</span></button>
-            <button onclick="navigate('mini')" class="btn-gold w-full py-7 rounded-2xl text-2xl font-bold tracking-wide"><span id="text-menu-mini">미니게임</span></button>
-            <button onclick="openCashSupport()" class="btn-gold w-full py-6 rounded-2xl flex flex-col justify-center items-center">
-                <span class="text-2xl font-bold tracking-wide" id="text-menu-cash">Cash</span>
-                <span class="text-xs text-gray-400 mt-1" id="text-menu-support">(고객센터)</span>
-            </button>
-        </div>
-
-        <!-- [Page 3] Live Game -->
-        <div id="page-live" class="page-container space-y-4">
-            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-casino-gold bg-black shadow-lg">
-                <iframe src="https://vdo.ninja/?view=UgMJMrr" class="w-full h-full border-0 pointer-events-none" allow="autoplay"></iframe>
-                <div class="absolute inset-0 z-10 cursor-pointer" onclick="showPopup()"></div>
-            </div>
-            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-casino-gold bg-black shadow-lg">
-                <iframe src="https://vdo.ninja/?view=PHhrWPR" class="w-full h-full border-0 pointer-events-none" allow="autoplay"></iframe>
-                <div class="absolute inset-0 z-10 cursor-pointer" onclick="showPopup()"></div>
-            </div>
-            <div class="w-full aspect-video rounded-xl border border-gray-700 bg-gray-900/60 flex items-center justify-center cursor-pointer" onclick="showPopup()">
-                <span class="text-gray-400 font-bold text-base class-coming-soon">준비중입니다</span>
-            </div>
-            <div class="w-full aspect-video rounded-xl border border-gray-700 bg-gray-900/60 flex items-center justify-center cursor-pointer" onclick="showPopup()">
-                <span class="text-gray-400 font-bold text-base class-coming-soon">준비중입니다</span>
-            </div>
-            <div class="w-full aspect-video rounded-xl border border-gray-700 bg-gray-900/60 flex items-center justify-center cursor-pointer" onclick="showPopup()">
-                <span class="text-gray-400 font-bold text-base class-coming-soon">준비중입니다</span>
-            </div>
-        </div>
-
-        <!-- [Page 4] 미니게임 -->
-        <div id="page-mini" class="page-container">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="aspect-square rounded-2xl border border-casino-gold bg-gray-900/90 overflow-hidden relative cursor-pointer shadow-md" onclick="openMiniGame('https://flappybird.io/')">
-                    <img src="game1.png" alt="Game 1" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900 p-2 text-center" style="display:none;">
-                        <span class="text-casino-gold font-bold text-lg">Game 1</span>
-                        <span class="text-[10px] text-red-400 mt-1">game1.png 필요</span>
-                    </div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-casino-gold bg-gray-900/90 overflow-hidden relative cursor-pointer shadow-md" onclick="openMiniGame('https://gridland.doublespeakgames.com/')">
-                    <img src="game2.jpeg" alt="Game 2" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900 p-2 text-center" style="display:none;">
-                        <span class="text-casino-gold font-bold text-lg">Game 2</span>
-                        <span class="text-[10px] text-red-400 mt-1">game2.jpeg 필요</span>
-                    </div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-gray-800 bg-gray-900/40 overflow-hidden relative cursor-pointer" onclick="showPopup()">
-                    <img src="1.png" alt="Game 3" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none;"><span class="text-gray-500 font-bold">Game 3</span><span class="text-[10px] text-gray-600 mt-1">1.png 필요</span></div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-gray-800 bg-gray-900/40 overflow-hidden relative cursor-pointer" onclick="showPopup()">
-                    <img src="2.png" alt="Game 4" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none;"><span class="text-gray-500 font-bold">Game 4</span><span class="text-[10px] text-gray-600 mt-1">2.png 필요</span></div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-gray-800 bg-gray-900/40 overflow-hidden relative cursor-pointer" onclick="showPopup()">
-                    <img src="3.png" alt="Game 5" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none;"><span class="text-gray-500 font-bold">Game 5</span><span class="text-[10px] text-gray-600 mt-1">3.png 필요</span></div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-gray-800 bg-gray-900/40 overflow-hidden relative cursor-pointer" onclick="showPopup()">
-                    <img src="4.png" alt="Game 6" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none;"><span class="text-gray-500 font-bold">Game 6</span><span class="text-[10px] text-gray-600 mt-1">4.png 필요</span></div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-gray-800 bg-gray-900/40 overflow-hidden relative cursor-pointer" onclick="showPopup()">
-                    <img src="5.png" alt="Game 7" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none;"><span class="text-gray-500 font-bold">Game 7</span><span class="text-[10px] text-gray-600 mt-1">5.png 필요</span></div>
-                </div>
-                <div class="aspect-square rounded-2xl border border-gray-800 bg-gray-900/40 overflow-hidden relative cursor-pointer" onclick="showPopup()">
-                    <img src="6.png" alt="Game 8" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none;"><span class="text-gray-500 font-bold">Game 8</span><span class="text-[10px] text-gray-600 mt-1">6.png 필요</span></div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- POPUP -->
-    <div id="custom-popup" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[200] hidden">
-        <div class="bg-casino-dark border border-casino-gold p-6 rounded-2xl max-w-xs w-full text-center shadow-2xl mx-4">
-            <p id="popup-text" class="text-white font-medium text-base mb-6">준비중입니다.</p>
-            <button id="popup-btn" onclick="closePopup()" class="bg-casino-gold text-black font-bold py-3 px-8 rounded-xl w-full">확인</button>
-        </div>
-    </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        let pageHistory = ['lang'];
-        let currentLang = 'ko';
-
-        const i18n = {
-            ko: {
-                selectLangTitle: '언어 선택',
-                selectLangSub: '이용하실 언어를 선택해 주세요',
-                proceedBtn: '확인하여 계속하기 ➜',
-                balance: '잔액',
-                point: 'Point',
-                live: 'Live Game',
-                mini: '미니게임',
-                cash: 'Cash',
-                support: '(고객센터)',
-                comingSoon: '현재 준비 중인 서비스입니다.',
-                confirm: '확인'
-            },
-            cn: {
-                selectLangTitle: '选择语言',
-                selectLangSub: '请选择您要使用的语言',
-                proceedBtn: '确认进入 ➜',
-                balance: '余额',
-                point: '积分',
-                live: '真人游戏 (Live)',
-                mini: '迷你游戏',
-                cash: '充值 / 提现',
-                support: '(客服中心)',
-                comingSoon: '该服务正在准备中。',
-                confirm: '确认'
-            },
-            en: {
-                selectLangTitle: 'SELECT LANGUAGE',
-                selectLangSub: 'Please select your language',
-                proceedBtn: 'Continue to Main ➜',
-                balance: 'Balance',
-                point: 'Point',
-                live: 'Live Game',
-                mini: 'Mini Games',
-                cash: 'Cash',
-                support: '(Support Center)',
-                comingSoon: 'This service is coming soon.',
-                confirm: 'OK'
-            }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            setupUserInfo();
-            detectAndSetInitialLanguage();
-            tg.BackButton.onClick(() => goBack());
-            updateBackButton();
-        });
-
-        function setupUserInfo() {
-            const user = tg.initDataUnsafe?.user;
-            const photo = document.getElementById('user-photo');
-
-            if (user) {
-                document.getElementById('user-name').textContent = user.first_name || 'User';
-                document.getElementById('user-id').textContent = user.id;
-                if (user.photo_url) photo.src = user.photo_url;
-            } else {
-                document.getElementById('user-name').textContent = 'VIP Guest';
-                document.getElementById('user-id').textContent = '777888999';
-            }
-        }
-
-        function detectAndSetInitialLanguage() {
-            const tgUser = tg.initDataUnsafe?.user;
-            const langCode = tgUser?.language_code || navigator.language || 'en';
-            let detected = 'en';
-
-            if (langCode.startsWith('ko')) detected = 'ko';
-            else if (langCode.startsWith('zh')) detected = 'cn';
-            else if (langCode.startsWith('en')) detected = 'en';
-
-            applyLanguageTexts(detected);
-            highlightSelectedCard(detected);
-            document.getElementById('proceed-btn').style.display = 'block';
-        }
-
-        function applyLanguageTexts(langCode) {
-            currentLang = langCode;
-            const d = i18n[langCode];
-
-            document.getElementById('text-balance').textContent = d.balance;
-            document.getElementById('text-point').textContent = d.point;
-            document.getElementById('text-select-lang-title').textContent = d.selectLangTitle;
-            document.getElementById('text-select-lang-sub').textContent = d.selectLangSub;
-            document.getElementById('proceed-btn').textContent = d.proceedBtn;
-            document.getElementById('text-menu-live').textContent = d.live;
-            document.getElementById('text-menu-mini').textContent = d.mini;
-            document.getElementById('text-menu-cash').textContent = d.cash;
-            document.getElementById('text-menu-support').textContent = d.support;
-            document.getElementById('popup-text').textContent = d.comingSoon;
-            document.getElementById('popup-btn').textContent = d.confirm;
-            document.querySelectorAll('.class-coming-soon').forEach(el => el.textContent = d.comingSoon);
-        }
-
-        function highlightSelectedCard(langCode) {
-            ['ko', 'cn', 'en'].forEach(l => {
-                const card = document.getElementById('card-' + l);
-                const badge = card.querySelector('.auto-badge');
-                badge.style.display = 'none';
-                card.classList.remove('lang-selected');
-                if (l === langCode) {
-                    badge.style.display = 'block';
-                    card.classList.add('lang-selected');
-                }
-            });
-        }
-
-        function setLanguage(langCode) {
-            applyLanguageTexts(langCode);
-            highlightSelectedCard(langCode);
-            navigateToMain();
-        }
-
-        function navigateToMain() {
-            navigate('main');
-        }
-
-        function navigate(pageId) {
-            const target = document.getElementById('page-' + pageId);
-            if (!target) return;
-
-            document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
-            target.classList.add('active');
-
-            if (pageHistory[pageHistory.length - 1] !== pageId) pageHistory.push(pageId);
-            window.scrollTo(0, 0);
-            updateBackButton();
-        }
-
-        function goBack() {
-            if (pageHistory.length <= 1) return;
-
-            pageHistory.pop();
-            const prev = pageHistory[pageHistory.length - 1];
-            const target = document.getElementById('page-' + prev);
-            if (!target) return;
-
-            document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
-            target.classList.add('active');
-            window.scrollTo(0, 0);
-            updateBackButton();
-        }
-
-        function updateBackButton() {
-            const btn = document.getElementById('btn-back');
-            const canGoBack = pageHistory.length > 1;
-
-            btn.style.visibility = canGoBack ? 'visible' : 'hidden';
-            if (canGoBack) tg.BackButton.show();
-            else tg.BackButton.hide();
-        }
-
-        function openCashSupport() {
-            tg.openTelegramLink('https://t.me/asd2567');
-        }
-
-        function openMiniGame(url) {
-            tg.openLink(url);
-        }
-
-        function showPopup() {
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-            document.getElementById('custom-popup').classList.remove('hidden');
-        }
-
-        function closePopup() {
-            document.getElementById('custom-popup').classList.add('hidden');
-        }
-    </script>
+<header class="profile-header">
+<div class="profile-user"><img id="user-photo" src="" alt="Profile" class="profile-photo"><div class="profile-meta"><span id="user-name" class="profile-name truncate">Guest</span><span class="profile-id truncate">ID: <span id="user-id">000000000</span></span></div></div>
+<div class="balance-box"><div id="text-balance" class="balance-label">잔액</div><div class="balance-value"><span id="user-balance">0</span> <span id="text-point" class="balance-point">Point</span></div></div>
+</header>
+<main class="flex-1">
+<div id="page-lang" class="page-container active flex flex-col items-center">
+<div class="text-center page-title"><h2 class="text-casino-gold font-bold tracking-wider" id="text-select-lang-title">언어 선택</h2><p class="text-gray-400 mt-1" id="text-select-lang-sub">이용하실 언어를 선택해 주세요</p></div>
+<div class="grid grid-cols-3 gap-2.5 w-full max-w-sm">
+<div onclick="setLanguage('ko')" id="card-ko" class="lang-card aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><div class="auto-badge" style="display:none">AUTO</div><span class="text-3xl mb-1">🇰🇷</span><span class="font-bold text-xs text-white">한국어</span><span class="text-[9px] text-casino-gold mt-1">KR</span></div>
+<div onclick="setLanguage('cn')" id="card-cn" class="lang-card aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><div class="auto-badge" style="display:none">AUTO</div><span class="text-3xl mb-1">🇨🇳</span><span class="font-bold text-xs text-white">中文</span><span class="text-[9px] text-casino-gold mt-1">CN</span></div>
+<div onclick="setLanguage('en')" id="card-en" class="lang-card aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><div class="auto-badge" style="display:none">AUTO</div><span class="text-3xl mb-1">🇺🇸</span><span class="font-bold text-xs text-white">English</span><span class="text-[9px] text-casino-gold mt-1">EN</span></div>
+<div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl mb-1">🇯🇵</span><span class="font-bold text-xs text-gray-300">日本語</span><span class="text-[9px] text-gray-500 mt-1">JP</span></div>
+<div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl mb-1">🇪🇸</span><span class="font-bold text-xs text-gray-300">Español</span><span class="text-[9px] text-gray-500 mt-1">ES</span></div>
+<div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl mb-1">🇷🇺</span><span class="font-bold text-xs text-gray-300">Русский</span><span class="text-[9px] text-gray-500 mt-1">RU</span></div>
+<div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl mb-1">🇫🇷</span><span class="font-bold text-xs text-gray-300">Français</span><span class="text-[9px] text-gray-500 mt-1">FR</span></div>
+<div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl mb-1">🇩🇪</span><span class="font-bold text-xs text-gray-300">Deutsch</span><span class="text-[9px] text-gray-500 mt-1">DE</span></div>
+<div onclick="showPopup()" class="lang-card lang-disabled aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer"><span class="text-3xl mb-1">🇵🇹</span><span class="font-bold text-xs text-gray-300">Português</span><span class="text-[9px] text-gray-500 mt-1">PT</span></div>
+</div>
+<button id="proceed-btn" onclick="navigateToMain()" class="mt-5 btn-gold w-full max-w-xs py-2.5 rounded-xl font-bold text-sm mx-auto block" style="display:none">확인하여 계속하기 ➜</button>
+</div>
+<div id="page-main" class="page-container mt-1 space-y-3"><button onclick="navigate('live')" class="btn-gold main-menu-btn w-full tracking-wide"><span id="text-menu-live">Live Game</span></button><button onclick="navigate('mini')" class="btn-gold main-menu-btn w-full tracking-wide"><span id="text-menu-mini">미니게임</span></button><button onclick="openCashSupport()" class="btn-gold main-menu-btn w-full flex flex-col justify-center items-center"><span id="text-menu-cash">Cash</span><span class="text-[10px] text-gray-400 mt-0.5" id="text-menu-support">(고객센터)</span></button></div>
+<div id="page-live" class="page-container space-y-3"><div class="relative w-full aspect-video rounded-xl overflow-hidden border border-casino-gold bg-black shadow-lg"><iframe src="https://vdo.ninja/?view=UgMJMrr" class="w-full h-full border-0 pointer-events-none" allow="autoplay"></iframe><div class="absolute inset-0 z-10 cursor-pointer" onclick="showPopup()"></div></div><div class="relative w-full aspect-video rounded-xl overflow-hidden border border-casino-gold bg-black shadow-lg"><iframe src="https://vdo.ninja/?view=PHhrWPR" class="w-full h-full border-0 pointer-events-none" allow="autoplay"></iframe><div class="absolute inset-0 z-10 cursor-pointer" onclick="showPopup()"></div></div><div class="w-full aspect-video rounded-xl border border-gray-700 bg-gray-900/60 flex items-center justify-center cursor-pointer" onclick="showPopup()"><span class="text-gray-400 font-bold text-sm class-coming-soon">준비중입니다</span></div><div class="w-full aspect-video rounded-xl border border-gray-700 bg-gray-900/60 flex items-center justify-center cursor-pointer" onclick="showPopup()"><span class="text-gray-400 font-bold text-sm class-coming-soon">준비중입니다</span></div><div class="w-full aspect-video rounded-xl border border-gray-700 bg-gray-900/60 flex items-center justify-center cursor-pointer" onclick="showPopup()"><span class="text-gray-400 font-bold text-sm class-coming-soon">준비중입니다</span></div></div>
+<div id="page-mini" class="page-container"><div class="grid grid-cols-2 gap-3">
+<div class="game-card aspect-square border border-casino-gold bg-gray-900/90 relative cursor-pointer shadow-md" onclick="openMiniGame('https://flappybird.io/')"><img src="game1.png" alt="Game 1" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900 p-2 text-center" style="display:none"><span class="text-casino-gold font-bold text-base">Game 1</span><span class="text-[9px] text-red-400 mt-1">game1.png 필요</span></div></div>
+<div class="game-card aspect-square border border-casino-gold bg-gray-900/90 relative cursor-pointer shadow-md" onclick="openMiniGame('https://gridland.doublespeakgames.com/')"><img src="game2.jpeg" alt="Game 2" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900 p-2 text-center" style="display:none"><span class="text-casino-gold font-bold text-base">Game 2</span><span class="text-[9px] text-red-400 mt-1">game2.jpeg 필요</span></div></div>
+<div class="game-card aspect-square border border-gray-800 bg-gray-900/40 relative cursor-pointer" onclick="showPopup()"><img src="1.png" alt="Game 3" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none"><span class="text-gray-500 font-bold">Game 3</span><span class="text-[9px] text-gray-600 mt-1">1.png 필요</span></div></div>
+<div class="game-card aspect-square border border-gray-800 bg-gray-900/40 relative cursor-pointer" onclick="showPopup()"><img src="2.png" alt="Game 4" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none"><span class="text-gray-500 font-bold">Game 4</span><span class="text-[9px] text-gray-600 mt-1">2.png 필요</span></div></div>
+<div class="game-card aspect-square border border-gray-800 bg-gray-900/40 relative cursor-pointer" onclick="showPopup()"><img src="3.png" alt="Game 5" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none"><span class="text-gray-500 font-bold">Game 5</span><span class="text-[9px] text-gray-600 mt-1">3.png 필요</span></div></div>
+<div class="game-card aspect-square border border-gray-800 bg-gray-900/40 relative cursor-pointer" onclick="showPopup()"><img src="4.png" alt="Game 6" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none"><span class="text-gray-500 font-bold">Game 6</span><span class="text-[9px] text-gray-600 mt-1">4.png 필요</span></div></div>
+<div class="game-card aspect-square border border-gray-800 bg-gray-900/40 relative cursor-pointer" onclick="showPopup()"><img src="5.png" alt="Game 7" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none"><span class="text-gray-500 font-bold">Game 7</span><span class="text-[9px] text-gray-600 mt-1">5.png 필요</span></div></div>
+<div class="game-card aspect-square border border-gray-800 bg-gray-900/40 relative cursor-pointer" onclick="showPopup()"><img src="6.png" alt="Game 8" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="w-full h-full flex flex-col items-center justify-center bg-gray-900/60 p-2 text-center" style="display:none"><span class="text-gray-500 font-bold">Game 8</span><span class="text-[9px] text-gray-600 mt-1">6.png 필요</span></div></div>
+</div></div></main>
+<div id="custom-popup" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[200] hidden"><div class="popup-panel bg-casino-dark border border-casino-gold w-full text-center shadow-2xl mx-4"><p id="popup-text" class="text-white font-medium text-sm mb-5">준비중입니다.</p><button id="popup-btn" onclick="closePopup()" class="bg-casino-gold text-black font-bold py-2.5 px-8 rounded-xl w-full min-h-[44px]">확인</button></div></div>
+<script>
+const tg=window.Telegram.WebApp;tg.ready();tg.expand();if(tg.setHeaderColor)tg.setHeaderColor('#07120a');if(tg.setBackgroundColor)tg.setBackgroundColor('#0b1d13');
+let pageHistory=['lang'],currentLang='ko';
+const i18n={ko:{selectLangTitle:'언어 선택',selectLangSub:'이용하실 언어를 선택해 주세요',proceedBtn:'확인하여 계속하기 ➜',balance:'잔액',point:'Point',live:'Live Game',mini:'미니게임',cash:'Cash',support:'(고객센터)',comingSoon:'현재 준비 중인 서비스입니다.',confirm:'확인'},cn:{selectLangTitle:'选择语言',selectLangSub:'请选择您要使用的语言',proceedBtn:'确认进入 ➜',balance:'余额',point:'积分',live:'真人游戏 (Live)',mini:'迷你游戏',cash:'充值 / 提现',support:'(客服中心)',comingSoon:'该服务正在准备中。',confirm:'确认'},en:{selectLangTitle:'SELECT LANGUAGE',selectLangSub:'Please select your language',proceedBtn:'Continue to Main ➜',balance:'Balance',point:'Point',live:'Live Game',mini:'Mini Games',cash:'Cash',support:'(Support Center)',comingSoon:'This service is coming soon.',confirm:'OK'}};
+window.addEventListener('DOMContentLoaded',()=>{setupUserInfo();detectAndSetInitialLanguage();tg.BackButton.onClick(()=>goBack());updateBackButton()});
+function setupUserInfo(){const user=tg.initDataUnsafe?.user,photo=document.getElementById('user-photo');if(user){document.getElementById('user-name').textContent=user.first_name||'User';document.getElementById('user-id').textContent=user.id;if(user.photo_url)photo.src=user.photo_url}else{document.getElementById('user-name').textContent='VIP Guest';document.getElementById('user-id').textContent='777888999'}}
+function detectAndSetInitialLanguage(){const tgUser=tg.initDataUnsafe?.user,langCode=tgUser?.language_code||navigator.language||'en';let detected='en';if(langCode.startsWith('ko'))detected='ko';else if(langCode.startsWith('zh'))detected='cn';else if(langCode.startsWith('en'))detected='en';applyLanguageTexts(detected);highlightSelectedCard(detected);document.getElementById('proceed-btn').style.display='block'}
+function applyLanguageTexts(langCode){currentLang=langCode;const d=i18n[langCode];document.getElementById('text-balance').textContent=d.balance;document.getElementById('text-point').textContent=d.point;document.getElementById('text-select-lang-title').textContent=d.selectLangTitle;document.getElementById('text-select-lang-sub').textContent=d.selectLangSub;document.getElementById('proceed-btn').textContent=d.proceedBtn;document.getElementById('text-menu-live').textContent=d.live;document.getElementById('text-menu-mini').textContent=d.mini;document.getElementById('text-menu-cash').textContent=d.cash;document.getElementById('text-menu-support').textContent=d.support;document.getElementById('popup-text').textContent=d.comingSoon;document.getElementById('popup-btn').textContent=d.confirm;document.querySelectorAll('.class-coming-soon').forEach(el=>el.textContent=d.comingSoon)}
+function highlightSelectedCard(langCode){['ko','cn','en'].forEach(l=>{const card=document.getElementById('card-'+l),badge=card.querySelector('.auto-badge');badge.style.display='none';card.classList.remove('lang-selected');if(l===langCode){badge.style.display='block';card.classList.add('lang-selected')}})}
+function setLanguage(langCode){applyLanguageTexts(langCode);highlightSelectedCard(langCode);navigateToMain()}function navigateToMain(){navigate('main')}
+function navigate(pageId){const target=document.getElementById('page-'+pageId);if(!target)return;document.querySelectorAll('.page-container').forEach(el=>el.classList.remove('active'));target.classList.add('active');if(pageHistory[pageHistory.length-1]!==pageId)pageHistory.push(pageId);window.scrollTo(0,0);updateBackButton()}
+function goBack(){if(pageHistory.length<=1)return;pageHistory.pop();const prev=pageHistory[pageHistory.length-1],target=document.getElementById('page-'+prev);if(!target)return;document.querySelectorAll('.page-container').forEach(el=>el.classList.remove('active'));target.classList.add('active');window.scrollTo(0,0);updateBackButton()}
+function updateBackButton(){if(pageHistory.length>1)tg.BackButton.show();else tg.BackButton.hide()}
+function openCashSupport(){tg.openTelegramLink('https://t.me/asd2567')}function openMiniGame(url){tg.openLink(url)}function showPopup(){if(tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('warning');document.getElementById('custom-popup').classList.remove('hidden')}function closePopup(){document.getElementById('custom-popup').classList.add('hidden')}
+</script>
 </body>
 </html>
