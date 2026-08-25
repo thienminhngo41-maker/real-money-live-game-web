@@ -1,0 +1,13 @@
+[build]
+  publish = "."
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Single-page/static app fallback. This keeps direct routes working if
+# client-side navigation is added later.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
