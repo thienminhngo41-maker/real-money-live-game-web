@@ -1,0 +1,5 @@
+/* Live Chat presentation module. */
+.chat-panel{overflow:hidden}
+.chat-list{display:flex;flex-direction:column;gap:7px}
+.chat-input{display:flex}
+.chat-input input{width:100%;user-select:text;-webkit-user-select:text}
