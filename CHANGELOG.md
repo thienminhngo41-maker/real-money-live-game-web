@@ -22,7 +22,9 @@
 
 ### UI fixes
 - Fixed the initial `준비중` modal appearing on page load by explicitly honoring the HTML `hidden` state with `.popup[hidden]{display:none}`.
-- Stabilized the Telegram profile topbar layout for narrow screens.
+- Strengthened the hidden-modal rule with `#popup[hidden]{display:none!important}`.
+- Stabilized the Telegram profile topbar with a grid layout so profile, balance, deposit, and withdrawal controls stay horizontally aligned on narrow Chrome/Telegram viewports.
+- Added tighter narrow-screen sizing for the topbar and preserved text truncation for long names/IDs.
 - Added a profile-avatar fallback when Telegram does not provide `photo_url` or the image fails to load.
 - Preserved the existing deposit, withdrawal, balance, name, and ID controls while preventing them from collapsing into the profile area.
 
