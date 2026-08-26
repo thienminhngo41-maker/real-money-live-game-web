@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#090909">
   <title>Real Money Live Game — PC Preview</title>
-  <link rel="stylesheet" href="./styles/desktop.css">
+  <link rel="stylesheet" href="./css/desktop.css">
 </head>
 <body>
   <div class="pc-preview">
@@ -30,7 +30,7 @@
         if (!doc.querySelector('link[data-platform="desktop-preview"]')) {
           const link = doc.createElement('link');
           link.rel = 'stylesheet';
-          link.href = './styles/desktop.css';
+          link.href = './css/desktop.css';
           link.dataset.platform = 'desktop-preview';
           doc.head.appendChild(link);
         }
