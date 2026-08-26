@@ -24,8 +24,14 @@ There is only one application implementation. `pc.html` is a presentation wrappe
 
 ```text
 js/
-├── app.js                 # application composition and event delegation
+├── app.js                 # thin application composition root + global delegation
 ├── state.js               # shared client-side prototype state
+│
+├── domains/
+│   ├── index.js           # domain facade exports
+│   ├── live/live.js       # live room lifecycle and vote behavior
+│   ├── chat/chat.js       # chat facade and chat input behavior
+│   └── betting/betting.js # betting facade and confirmation behavior
 │
 ├── components/
 │   ├── topbar.js          # profile/balance/action header
@@ -42,18 +48,36 @@ js/
 │   └── profile.js         # profile markup
 │
 └── services/
-    ├── telegram.js       # Telegram WebApp + browser fallback
-    ├── chat.js            # test chat simulation
-    └── betting.js         # test betting state/calculations
+    ├── telegram.js        # Telegram WebApp + browser fallback
+    ├── chat.js            # test chat simulation implementation
+    └── betting.js         # test betting state/calculations implementation
 ```
 
-### Module boundaries
+### Domain boundaries
 
+- `domains/live/` owns live-room behavior and live-specific lifecycle orchestration.
+- `domains/chat/` owns chat interaction orchestration while preserving the existing chat service implementation.
+- `domains/betting/` owns betting orchestration while preserving the existing betting service calculations.
+- `services/` remains the implementation layer for reusable integrations/feature primitives. Existing services are intentionally retained during this refactor.
 - `components/` renders reusable UI blocks and handles component-level presentation.
 - `pages/` owns page-specific markup and page navigation behavior.
-- `services/` owns integrations and feature logic that should not be embedded in page markup.
 - `state.js` is the temporary client-side source of truth for prototype UI state only.
-- `app.js` composes modules and owns global event delegation. It should stay small.
+- `app.js` composes domains/components/pages and owns only application-wide event delegation. Domain behavior must not be reimplemented in `app.js`.
+
+### Dependency direction
+
+```text
+                         app.js
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+       Live domain      Chat domain     Betting domain
+          │                │                │
+          ▼                ▼                ▼
+       services         services         services
+```
+
+Domains may wrap existing services, but pages/components should not need to know how a domain's internal service implementation works. Domain-to-domain coupling should be avoided; cross-domain orchestration belongs at the application composition boundary.
 
 ## Data modules
 
@@ -98,17 +122,16 @@ Browser / Telegram
        ▼
      app.js
        │
- ┌─────┼───────────────┐
- ▼     ▼               ▼
-Data  Pages       Components
- │      │               │
- └──────┴───────┬───────┘
-                 ▼
-             Services
-                 │
-        ┌────────┼─────────┐
-        ▼        ▼         ▼
-    Telegram    Chat     Betting
+ ┌─────┼────────────────────────┐
+ ▼     ▼          ▼             ▼
+Data  Pages    Components     Domains
+ │      │          │        ┌────┼────┐
+ └──────┴──────────┴────────▼────▼────▼
+                         Live Chat Betting
+                            │     │    │
+                            └─────┼────┘
+                                  ▼
+                               Services
 ```
 
 ## PC Preview
@@ -119,7 +142,7 @@ Data  Pages       Components
 2. an iframe pointing at `index.html`;
 3. the `desktop` platform flag and desktop stylesheet injection.
 
-The same JavaScript modules, HTML markup, data, and services are therefore exercised on mobile and PC.
+The same JavaScript modules, HTML markup, data, domains, and services are therefore exercised on mobile and PC.
 
 ## Backend boundary
 
