@@ -20,6 +20,12 @@
 - Updated `data/games.js` image references to `assets/images/...`.
 - Consolidated `1.png` through `6.png`, `game1.png`, and `game2.jpeg`.
 
+### UI fixes
+- Fixed the initial `준비중` modal appearing on page load by explicitly honoring the HTML `hidden` state with `.popup[hidden]{display:none}`.
+- Stabilized the Telegram profile topbar layout for narrow screens.
+- Added a profile-avatar fallback when Telegram does not provide `photo_url` or the image fails to load.
+- Preserved the existing deposit, withdrawal, balance, name, and ID controls while preventing them from collapsing into the profile area.
+
 ### Live Room
 - Documented Live Stream / Live Room responsibilities.
 - Documented test chat and test vote behavior.
