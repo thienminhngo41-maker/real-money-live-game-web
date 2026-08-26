@@ -1,6 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 
+console.log('🔥 FIREBASE CONFIG FILE LOADED');
+console.log('DATABASE URL:', import.meta.env.VITE_FIREBASE_DATABASE_URL);
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
