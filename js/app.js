@@ -9,7 +9,7 @@ import {renderBottomNav} from './components/bottomNav.js';
 import {renderModal,openDepositModal,openWithdrawModal,closeModal} from './components/modal.js';
 import {renderBettingSheet,openBetting,closeBetting,handleBetClick,updateBetUI} from './components/bettingSheet.js';
 import {renderHome} from './pages/home.js';
-import {renderLive} from './pages/live.js';
+import {renderLive,initLiveStreams} from './pages/live.js';
 import {renderRoom} from './pages/room.js';
 import {renderMini} from './pages/mini.js';
 import {renderProfile} from './pages/profile.js';
@@ -29,4 +29,8 @@ document.addEventListener('click',e=>{const nav=e.target.closest('[data-page]');
 document.addEventListener('submit',handleSubmit);
 document.querySelector('#bet-overlay').addEventListener('click',e=>{if(e.target.id==='bet-overlay')closeBetting()});
 tg.BackButton.onClick(()=>router.back());
+
+// Start listening to Firebase after the existing page renderer is ready.
+// The callback only re-renders the existing pages, so the current room/betting flow remains unchanged.
+initLiveStreams(renderPages);
 renderPages();applyLang();
