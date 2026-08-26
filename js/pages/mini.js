@@ -1,0 +1,2 @@
+import {games} from '../../data/games.js';
+export function renderMini(){return `<section id="page-mini" class="page"><div class="page-title">미니게임</div><div class="game-row" style="display:grid;grid-template-columns:1fr 1fr;overflow:visible">${games.slice(0,4).map(g=>`<button class="game-tile" style="width:auto;height:auto;aspect-ratio:1" data-game="${g.id}"><img src="${g.image}" alt="${g.id}"></button>`).join('')}</div></section>`}
