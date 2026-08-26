@@ -1,9 +1,5 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
-import { getDatabase, ref, get, set, update, onValue } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';
-import { firebaseConfig } from './config.js';
-
-const app = initializeApp(firebaseConfig);
-export const db = getDatabase(app);
+import { ref, get, set, update, onValue } from 'firebase/database';
+import { db } from './config.js';
 
 export const userRef = (telegramId) => ref(db, `users/${telegramId}`);
 
@@ -20,8 +16,13 @@ export async function updateUser(telegramId, data) {
   await update(userRef(telegramId), data);
 }
 
-export function watchStreams(callback) {
-  return onValue(ref(db, 'settings/streams'), (snapshot) => {
-    callback(snapshot.val() || {});
-  });
+export function watchStreams(callback, onError) {
+  return onValue(
+    ref(db, 'settings/streams'),
+    (snapshot) => callback(snapshot.val() || {}),
+    (error) => {
+      console.error('[Firebase] Failed to read settings/streams:', error);
+      onError?.(error);
+    }
+  );
 }
