@@ -1,0 +1,43 @@
+/* Desktop / PC Web presentation module.
+ * Shared feature markup stays in index.html; this file only changes presentation.
+ */
+:root{--desktop-content-max-width:1200px;--desktop-bg:#050505;--desktop-surface:#101010}
+html[data-platform="desktop"],html[data-platform="desktop"] body{background:var(--desktop-bg)!important}
+html[data-platform="desktop"] body{padding:0!important;min-height:100vh!important}
+html[data-platform="desktop"] .topbar{position:sticky;top:0;z-index:100;height:64px;padding:8px 24px;max-width:none;border-bottom:1px solid #292929}
+html[data-platform="desktop"] .topbar .user{max-width:420px}
+html[data-platform="desktop"] main{max-width:var(--desktop-content-max-width);min-height:calc(100vh - 64px)!important;padding:24px 28px 40px;display:block}
+html[data-platform="desktop"] .page{animation:none}
+html[data-platform="desktop"] .hero{height:260px}
+html[data-platform="desktop"] .provider-grid{grid-template-columns:repeat(4,1fr)}
+html[data-platform="desktop"] .game-row{display:grid;grid-template-columns:repeat(5,1fr);overflow:visible}
+html[data-platform="desktop"] .game-tile{width:auto;height:auto;aspect-ratio:1}
+html[data-platform="desktop"] #page-live .live-card{display:inline-block;width:calc(50% - 6px);vertical-align:top;margin-right:8px}
+html[data-platform="desktop"] #page-live .live-card:nth-of-type(3){margin-right:0}
+html[data-platform="desktop"] #page-live .live-note{font-size:11px}
+html[data-platform="desktop"] #page-live-room .room-stream{display:inline-block;width:calc(50% - 7px);vertical-align:top;margin-right:8px}
+html[data-platform="desktop"] #page-live-room .room-stream:nth-of-type(3){margin-right:0}
+html[data-platform="desktop"] #page-live-room .vote-panel,html[data-platform="desktop"] #page-live-room .chat-panel{max-width:100%}
+html[data-platform="desktop"] #page-live-room .chat-list{height:280px}
+html[data-platform="desktop"] .bottom{display:none!important}
+html[data-platform="desktop"] .float-stack{right:28px;bottom:28px}
+html[data-platform="desktop"] .bet-sheet{max-width:760px}
+html[data-platform="desktop"] .bet-grid{grid-template-columns:repeat(4,1fr)}
+html[data-platform="desktop"] .bet-option.full{grid-column:auto}
+html[data-platform="desktop"] .profile-panel{max-width:760px;margin-left:auto;margin-right:auto}
+@media(max-width:900px){
+  html[data-platform="desktop"] main{padding:18px}
+  html[data-platform="desktop"] .provider-grid{grid-template-columns:repeat(2,1fr)}
+  html[data-platform="desktop"] #page-live .live-card,html[data-platform="desktop"] #page-live-room .room-stream{width:100%;margin-right:0}
+}
+
+/* PC preview chrome */
+html,body{margin:0;min-height:100%;background:#050505;color:#fff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.pc-preview{min-height:100vh;display:flex;flex-direction:column}
+.pc-preview__bar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#0c0c0c;border-bottom:1px solid #252525;box-sizing:border-box}
+.pc-preview__brand{font-weight:900;letter-spacing:.2px}
+.pc-preview__badge{font-size:11px;color:#d4af37;border:1px solid #4b3b13;border-radius:999px;padding:5px 9px}
+.pc-preview__stage{flex:1;min-height:0;padding:18px;box-sizing:border-box}
+.pc-preview__frame{width:100%;height:calc(100vh - 88px);min-height:620px;border:1px solid #292929;border-radius:16px;background:#090909;box-shadow:0 15px 50px #000;overflow:hidden}
+.pc-preview__frame iframe{width:100%;height:100%;border:0;display:block;background:#090909}
+@media(max-width:760px){.pc-preview__bar{padding:0 12px}.pc-preview__stage{padding:0}.pc-preview__frame{height:100vh;min-height:0;border:0;border-radius:0}}
