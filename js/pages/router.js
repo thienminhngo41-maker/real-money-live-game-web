@@ -1,0 +1,3 @@
+import {state} from '../state.js';
+import {stopChat} from '../services/chat.js';
+export function createRouter(renderPages,onRoomChange){function show(page){state.page=page;renderPages();document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.page===page));window.scrollTo(0,0);if(page!=='live-room')stopChat();onRoomChange?.(page)}function navigate(page){if(page==='live-room')return;if(state.history.at(-1)!==page)state.history.push(page);show(page)}function back(){if(state.history.length<=1)return;state.history.pop();show(state.history.at(-1))}return{show,navigate,back}}
