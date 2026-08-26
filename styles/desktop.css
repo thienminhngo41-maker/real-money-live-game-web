@@ -1,0 +1,10 @@
+/* Desktop / PC Web layout module
+ *
+ * This file owns desktop-only layout rules. Feature behavior remains shared.
+ */
+
+:root {
+  --desktop-content-max-width: 1200px;
+}
+
+/* Migration note: move desktop-only rules here as pc.html is introduced. */
