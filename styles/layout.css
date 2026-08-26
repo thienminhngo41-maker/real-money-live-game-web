@@ -1,0 +1,7 @@
+/* Layout module: mobile viewport, fixed navigation and content spacing. */
+body{padding-top:calc(var(--top) + var(--safe-top));padding-bottom:calc(var(--bottom) + var(--safe-bottom))}
+main{padding:9px 10px 14px;max-width:520px;min-height:calc(100dvh - var(--top) - var(--bottom));margin:auto}
+.bottom{position:fixed;left:0;right:0;bottom:0;height:calc(var(--bottom) + var(--safe-bottom));padding-bottom:var(--safe-bottom);z-index:110;display:grid;grid-template-columns:repeat(4,1fr);align-items:stretch}
+.nav{width:100%;height:var(--bottom);padding:4px 2px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.float-stack{position:fixed;right:16px;bottom:calc(var(--bottom) + var(--safe-bottom) + 14px);z-index:120}
+@media(max-width:360px){:root{--top:55px}.float-stack{right:13px}}

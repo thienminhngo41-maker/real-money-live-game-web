@@ -1,0 +1,22 @@
+import {betOptions,chips} from '../../data/betting.js';
+import {state} from '../state.js';
+import {addBet,totalBet} from '../domains/betting/betting.js';
+
+const groups={
+ special:['dragon7','panda8'],
+ side:['playerPair','tie','bankerPair'],
+ main:['player','banker']
+};
+const byId=Object.fromEntries(betOptions.map(o=>[o.id,o]));
+const optionClass={dragon7:'dragon7',panda8:'panda8',playerPair:'pp',tie:'tie',bankerPair:'bp',player:'player',banker:'banker'};
+
+function optionButton(o){return `<button class="bet-option ${optionClass[o.id]||''}${state.selectedBet===o.id?' is-selected':''}" data-bet-id="${o.id}" aria-pressed="${state.selectedBet===o.id}"><span class="bet-name">${o.id==='dragon7'?'🐉 ':''}${o.id==='panda8'?'🐼 ':''}${o.id==='playerPair'?'P.P':o.id==='bankerPair'?'B.P':o.name}</span><span class="bet-type">${o.type}</span><div class="bet-odds">${o.odds}</div><div class="bet-amount">${(state.betAmounts[o.id]||0)} P</div></button>`}
+
+export function renderBettingSheet(){const root=document.querySelector('#modal-root');root.insertAdjacentHTML('beforeend',`<div id="bet-overlay" class="bet-overlay" aria-hidden="true"><div class="bet-sheet betting-sheet" role="dialog" aria-label="Baccarat Betting"><div class="sheet-grab"></div><div class="bet-head"><span class="bet-title">Baccarat Betting</span><span class="test-badge">TEST MODE</span></div><div id="bet-grid" class="betting-sheet__options"></div><div class="chip-title">CHIP</div><div id="chip-row" class="chip-row betting-sheet__amount"></div><div class="amount-row"><input id="bet-amount-input" class="amount-input" type="number" min="0" step="1" inputmode="numeric" placeholder="직접 금액 입력"><button class="max-btn" data-bet-max>MAX</button></div><div class="bet-summary"><span>선택 금액</span><strong><span id="selected-amount">0</span> P</strong></div><button id="bet-confirm" class="bet-confirm betting-sheet__confirm" data-bet-confirm disabled>베팅 확인</button><button class="bet-close" data-bet-close>닫기</button></div></div>`);renderBetOptions();renderChips()}
+
+export function renderBetOptions(){const el=document.querySelector('#bet-grid');if(!el)return;el.innerHTML=Object.entries(groups).map(([group,ids])=>`<div class="betting-sheet__options betting-sheet__${group}">${ids.map(id=>byId[id]).filter(Boolean).map(optionButton).join('')}</div>`).join('')}
+export function renderChips(){const el=document.querySelector('#chip-row');if(!el)return;el.innerHTML=chips.map(c=>`<button class="chip ${state.selectedChip===c?'selected':''}" data-chip="${c}" aria-pressed="${state.selectedChip===c}">${c}</button>`).join('')}
+export function updateBetUI(){document.querySelector('#selected-amount').textContent=totalBet().toLocaleString();document.querySelector('#bet-confirm').disabled=totalBet()<=0;renderBetOptions();renderChips()}
+export function openBetting(){const overlay=document.querySelector('#bet-overlay');if(!overlay)return;window.scrollTo({top:0,behavior:'smooth'});document.body.classList.add('betting-open');if(overlay.parentElement!==document.body)document.body.appendChild(overlay);overlay.classList.add('show');overlay.setAttribute('aria-hidden','false')}
+export function closeBetting(){const overlay=document.querySelector('#bet-overlay');if(!overlay)return;overlay.classList.remove('show');overlay.setAttribute('aria-hidden','true');document.body.classList.remove('betting-open');window.setTimeout(()=>{const root=document.querySelector('#modal-root');if(root&&overlay&&!overlay.classList.contains('show'))root.appendChild(overlay)},280)}
+export function handleBetClick(e){const bet=e.target.closest('[data-bet-id]');if(bet){state.selectedBet=bet.dataset.betId;const input=document.querySelector('#bet-amount-input');addBet(state.selectedBet,Number(input.value)||state.selectedChip);input.value='';updateBetUI();return}const chip=e.target.closest('[data-chip]');if(chip){state.selectedChip=Number(chip.dataset.chip);document.querySelector('#bet-amount-input').value='';updateBetUI()}}

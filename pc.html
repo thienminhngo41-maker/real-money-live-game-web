@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090909">
+  <title>Real Money Live Game — PC Preview</title>
+  <link rel="stylesheet" href="./css/desktop.css">
+</head>
+<body>
+  <div class="pc-preview">
+    <header class="pc-preview__bar">
+      <div class="pc-preview__brand">Real Money: Live Game</div>
+      <div class="pc-preview__badge">PC / WEB PREVIEW</div>
+    </header>
+    <main class="pc-preview__stage">
+      <div class="pc-preview__frame">
+        <iframe id="app-frame" src="./index.html" title="Real Money Live Game PC Preview"></iframe>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const frame = document.getElementById('app-frame');
+    frame.addEventListener('load', () => {
+      try {
+        const doc = frame.contentDocument;
+        if (!doc) return;
+        doc.documentElement.dataset.platform = 'desktop';
+        if (!doc.querySelector('link[data-platform="desktop-preview"]')) {
+          const link = doc.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = './css/desktop.css';
+          link.dataset.platform = 'desktop-preview';
+          doc.head.appendChild(link);
+        }
+      } catch (error) {
+        console.warn('Desktop preview styling could not be injected.', error);
+      }
+    });
+  </script>
+</body>
+</html>
