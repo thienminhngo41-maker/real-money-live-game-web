@@ -1,0 +1,24 @@
+/* User-friendly betting sheet: thumb-first mobile controls */
+.betting-sheet{max-height:min(70vh,620px);overflow-y:auto;overscroll-behavior:contain;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px));}
+.betting-sheet__options{display:grid;gap:8px;}
+.betting-sheet__special{grid-template-columns:repeat(2,minmax(0,1fr));}
+.betting-sheet__side{grid-template-columns:repeat(3,minmax(0,1fr));}
+.betting-sheet__main{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.betting-sheet button{min-height:48px;border:0;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s,filter .12s,box-shadow .12s;}
+.betting-sheet button:active{transform:scale(.98);}
+.betting-sheet button:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
+.betting-sheet__special button{min-height:52px;color:#000;}
+.betting-sheet__special .dragon7{background:#e53935;}
+.betting-sheet__special .panda8{background:#42a5f5;}
+.betting-sheet__side button{min-height:46px;color:#fff;}
+.betting-sheet__side .pp{background:#1976d2;}
+.betting-sheet__side .tie{background:#2e7d32;}
+.betting-sheet__side .bp{background:#c62828;}
+.betting-sheet__main button{min-height:62px;color:#fff;font-size:1.05rem;}
+.betting-sheet__main .player{background:#1976d2;}
+.betting-sheet__main .banker{background:#c62828;}
+.betting-sheet button.is-selected{box-shadow:inset 0 0 0 3px #fff,0 0 0 2px rgba(0,0,0,.25);filter:brightness(1.08);}
+.betting-sheet__amount{margin-top:10px;}
+.betting-sheet__confirm{width:100%;min-height:52px;margin-top:10px;}
+@media(max-width:480px){.betting-sheet{max-height:68vh;padding-left:10px;padding-right:10px}.betting-sheet__special,.betting-sheet__side,.betting-sheet__main{gap:7px}.betting-sheet__main button{min-height:60px}.betting-sheet button{border-radius:10px}}
+@media(min-width:768px){.betting-sheet{max-width:720px;margin-inline:auto}.betting-sheet__main button{min-height:64px}}
