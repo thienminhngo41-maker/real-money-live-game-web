@@ -27,6 +27,8 @@
 - Added tighter narrow-screen sizing for the topbar and preserved text truncation for long names/IDs.
 - Added a profile-avatar fallback when Telegram does not provide `photo_url` or the image fails to load.
 - Preserved the existing deposit, withdrawal, balance, name, and ID controls while preventing them from collapsing into the profile area.
+- Fixed the root cause of the broken topbar: `#topbar` was rendered without the `.topbar` class, so the grid/fixed-position layout rules were never applied.
+- Made modal visibility explicit in JavaScript so the popup is `display:none` until `openModal()` is called, independent of browser CSS handling of `[hidden]`.
 
 ### Live Room
 - Documented Live Stream / Live Room responsibilities.
