@@ -2,7 +2,8 @@ import {getTelegramUser} from '../services/telegram.js';
 
 export function renderTopbar(){
   const u=getTelegramUser();
-  const name=u?.first_name||u?.username||'VIP Guest';
+  const fullName=[u?.first_name,u?.last_name].filter(Boolean).join(' ');
+  const name=fullName||u?.username||'VIP Guest';
   const id=u?.id||'777888999';
   const photo=u?.photo_url||'';
   const initials=(name||'V').trim().slice(0,1).toUpperCase();
