@@ -15,8 +15,8 @@ html[data-platform="desktop"] .game-tile{width:auto;height:auto;aspect-ratio:1}
 html[data-platform="desktop"] #page-live .live-card{display:inline-block;width:calc(50% - 6px);vertical-align:top;margin-right:8px}
 html[data-platform="desktop"] #page-live .live-card:nth-of-type(3){margin-right:0}
 html[data-platform="desktop"] #page-live .live-note{font-size:11px}
-html[data-platform="desktop"] #page-live-room .room-stream{display:inline-block;width:calc(50% - 7px);vertical-align:top;margin-right:8px}
-html[data-platform="desktop"] #page-live-room .room-stream:nth-of-type(3){margin-right:0}
+html[data-platform="desktop"] #page-live-room .room-stream{display:block;width:100%;margin:0}
+html[data-platform="desktop"] #page-live-room .room-stream .live-card{width:100%;display:block;margin:0}
 html[data-platform="desktop"] #page-live-room .vote-panel,html[data-platform="desktop"] #page-live-room .chat-panel{max-width:100%}
 html[data-platform="desktop"] #page-live-room .chat-list{height:280px}
 html[data-platform="desktop"] .bottom{display:none!important}
@@ -28,7 +28,10 @@ html[data-platform="desktop"] .profile-panel{max-width:760px;margin-left:auto;ma
 @media(max-width:900px){
   html[data-platform="desktop"] main{padding:18px}
   html[data-platform="desktop"] .provider-grid{grid-template-columns:repeat(2,1fr)}
-  html[data-platform="desktop"] #page-live .live-card,html[data-platform="desktop"] #page-live-room .room-stream{width:100%;margin-right:0}
+  html[data-platform="desktop"] #page-live .live-card{width:100%;margin-right:0}
+  html[data-platform="desktop"] #page-live-room{display:block}
+  html[data-platform="desktop"] #page-live-room .room-stream{width:100%;margin-bottom:10px}
+  html[data-platform="desktop"] #page-live-room .vote-panel,html[data-platform="desktop"] #page-live-room .chat-panel{margin-bottom:10px}
 }
 
 /* PC preview chrome */
