@@ -28,12 +28,12 @@ README를 하나의 거대한 문서로 유지하지 않고 주제별 문서로 
 코드를 PC용과 Telegram용으로 두 벌 복제하지 않습니다.
 
 ```text
-                 Shared Source
+                 Shared App
                       │
           ┌───────────┴───────────┐
           │                       │
-      PC Web UI             Telegram Mini App
-       pc.html                 index.html
+      PC Web Preview        Telegram Mini App
+        pc.html                 index.html
           │                       │
           └───────────┬───────────┘
                       │
@@ -42,12 +42,10 @@ README를 하나의 거대한 문서로 유지하지 않고 주제별 문서로 
         ┌─────────────┼─────────────┐
         │             │             │
       Live         Betting        Chat
-        │             │             │
-        └─────────────┴─────────────┘
 ```
 
 - `index.html` — Telegram Mini App / 모바일 우선 진입점
-- `pc.html` — PC 브라우저에서 바로 확인하는 Web Preview 진입점
+- `pc.html` — 동일한 `index.html`을 PC 레이아웃으로 확인하는 Preview 진입점
 - `src/` — 실제 기능 로직은 두 환경이 공유
 - `styles/mobile.css` — 모바일/Telegram 레이아웃
 - `styles/desktop.css` — PC 레이아웃
@@ -72,12 +70,13 @@ Telegram API가 없는 일반 브라우저에서도 개발 화면이 깨지지 �
 
 ## 🖥️ PC Web Preview
 
-PC에서는 넓은 화면을 활용하는 별도 레이아웃을 사용합니다.
+`pc.html`을 열면 별도의 F12 모바일 에뮬레이션 없이 PC 화면을 확인할 수 있습니다.
 
+- 동일한 `index.html`을 재사용
+- PC 전용 `desktop.css`를 Preview iframe에 적용
 - 고정된 모바일 폭을 PC에 억지로 확대하지 않음
 - Live 스트림을 넓은 화면에 맞게 배치
 - Chat / Betting 영역의 데스크톱 사용성 개선
-- 마우스 hover 및 큰 터치 영역에 의존하지 않는 일반 웹 UX
 - 동일한 Live / Betting / Chat 로직 공유
 
 ## 🎥 Live Room
@@ -239,14 +238,15 @@ real-money-live-game-web/
 ### Phase 1 — UI Prototype
 
 - [x] Telegram Mini App UI
-- [x] PC Web Preview architecture documented
+- [x] PC Web Preview entry
+- [x] PC/Mobile platform architecture documented
 - [x] 다국어
 - [x] Live Game / Live Room
 - [x] Test Chat / Test Vote
 - [x] Test Baccarat Betting UI
 - [x] Banker 5% commission rule documented
+- [x] Mobile / Desktop stylesheet foundation
 - [ ] Inline CSS 완전 제거 및 external CSS 적용
-- [ ] PC/Mobile stylesheet 분리 완료
 - [ ] Live JavaScript 모듈화
 - [ ] Betting JavaScript 모듈화
 
