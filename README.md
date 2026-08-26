@@ -8,16 +8,19 @@ Live Game / Mini Game 서비스의 UI/UX와 상태 흐름을 검증하는 정적
 
 기존에는 `index.html` 하나에 HTML, 대량의 inline CSS, 데이터, 화면 전환, Telegram 연동, Chat, Vote, Betting 로직이 집중되어 있었습니다. 이번 리팩터링에서는 **HTML은 앱 셸**, **CSS는 기능별 스타일**, **JS는 페이지/컴포넌트/서비스**, **게임·베팅 데이터는 data**로 분리했습니다.
 
+또한 PC용 코드를 별도로 복제하지 않고 `pc.html`이 동일한 `index.html`을 iframe으로 사용하도록 정리했습니다.
+
 ### 핵심 원칙
 
 - `index.html`은 진입점과 DOM mount point만 담당
-- `css/`는 스타일만 담당
+- `css/`는 모바일 기본 스타일과 PC presentation을 담당
 - `data/`는 변경 가능한 게임/베팅/번역 데이터를 담당
 - `js/components/`는 재사용 UI를 담당
 - `js/pages/`는 화면 렌더링을 담당
 - `js/services/`는 Telegram/Chat/Betting 같은 기능을 담당
 - `js/state.js`는 브라우저 세션 상태를 한곳에서 관리
 - `js/app.js`는 조립과 이벤트 연결만 담당
+- `pc.html`은 애플리케이션 로직을 복제하지 않음
 - 실제 잔액/정산은 클라이언트에서 결정하지 않음
 
 ## Project Structure
@@ -35,11 +38,12 @@ real-money-live-game-web/
 ├── css/
 │   ├── variables.css       # Theme / safe-area variables
 │   ├── base.css            # Reset / common rules
-│   ├── layout.css          # Header / main / bottom navigation
+│   ├── layout.css          # App shell / navigation layout
 │   ├── components.css      # Hero / cards / modal / floating actions
 │   ├── live.css            # Live / Room / Vote / Chat
 │   ├── betting.css         # Betting bottom sheet
-│   └── profile.css         # Profile screen
+│   ├── profile.css         # Profile screen
+│   └── desktop.css         # PC presentation / preview chrome
 │
 ├── data/
 │   ├── games.js            # Games / providers / featured content
@@ -95,6 +99,8 @@ real-money-live-game-web/
                  games / betting / i18n
 ```
 
+## Entry Points
+
 ### `index.html`
 
 HTML 구조를 직접 길게 보관하지 않고 다음 mount point만 제공합니다.
@@ -107,9 +113,27 @@ HTML 구조를 직접 길게 보관하지 않고 다음 mount point만 제공합
 
 모든 애플리케이션 JavaScript는 `type="module"`로 `js/app.js`에서 시작합니다.
 
+### `pc.html`
+
+PC Preview는 별도의 앱이 아닙니다.
+
+```text
+pc.html
+   │
+   └── iframe
+         │
+         └── index.html
+               │
+               └── js/app.js
+```
+
+`pc.html`은 `css/desktop.css`를 자체적으로 사용하고 iframe 내부에도 동일한 stylesheet를 주입한 뒤 `data-platform="desktop"`을 설정합니다. 따라서 모바일/Telegram과 PC가 같은 HTML/JS/data를 공유합니다.
+
+## JavaScript Modules
+
 ### `js/app.js`
 
-앱의 composition root입니다. 컴포넌트와 페이지를 조립하고, `data-*` 이벤트를 연결합니다. 새로운 비즈니스 로직을 이 파일에 계속 추가하지 않는 것을 원칙으로 합니다.
+앱의 composition root입니다. 컴포넌트와 페이지를 조립하고 `data-*` 이벤트를 연결합니다. 새로운 비즈니스 로직을 이 파일에 계속 추가하지 않는 것을 원칙으로 합니다.
 
 ### `js/pages/`
 
@@ -134,9 +158,34 @@ HTML 구조를 직접 길게 보관하지 않고 다음 mount point만 제공합
 
 프로덕션 Backend가 추가되면 API/WebSocket/인증 구현을 이 경계에 연결하는 것을 권장합니다.
 
-### `data/`
+### `js/state.js`
 
-화면 코드에서 하드코딩하던 변경 가능 데이터를 분리했습니다. 게임 URL을 변경하거나 배당 표시를 변경할 때 페이지 코드를 수정할 필요가 없습니다.
+현재는 브라우저 세션에서 필요한 페이지, 언어, Live Room, Betting 상태를 한곳에서 관리합니다. 실제 사용자/지갑 데이터의 source of truth가 아닙니다.
+
+## Data Modules
+
+`data/`에는 화면 코드에서 하드코딩하던 변경 가능 데이터를 둡니다.
+
+- `games.js` — 미니게임 URL, provider, feature 데이터
+- `betting.js` — 배팅 옵션, 배당 표시, 칩
+- `i18n.js` — 한국어/중국어/영어 문자열과 언어 감지
+
+게임 URL이나 표시 배당을 변경할 때 페이지 코드를 수정할 필요가 없습니다.
+
+## CSS Modules
+
+모바일 기본 스타일은 `css/`에 기능별로 분리되어 있습니다.
+
+- `variables.css` — design tokens / safe area
+- `base.css` — reset / typography
+- `layout.css` — app shell / navigation
+- `components.css` — shared UI
+- `live.css` — Live / Room / Chat / Vote
+- `betting.css` — Betting Sheet
+- `profile.css` — Profile
+- `desktop.css` — PC-only presentation
+
+새로운 스타일은 가능한 한 해당 기능 CSS에 추가하며 inline `<style>`이나 HTML `style="..."`은 사용하지 않습니다.
 
 ## Platform
 
@@ -154,7 +203,7 @@ Telegram API가 없는 일반 브라우저에서도 앱이 실행되도록 fallb
 
 ### PC Web Preview
 
-`pc.html`은 기존 Preview 진입점으로 유지합니다. 공통 애플리케이션 모듈을 재사용하며 플랫폼별 레이아웃 차이는 페이지/스타일 계층에서 처리합니다.
+`pc.html`은 동일한 앱을 PC에서 확인하기 위한 presentation wrapper입니다. PC 전용 차이는 `css/desktop.css`로 처리하며 Live, Chat, Betting 등의 JavaScript는 모바일과 동일합니다.
 
 ## Live Room
 
@@ -223,8 +272,6 @@ Banker 테스트 반환 규칙은 기존 프로토타입의 5% commission 모델
 
 로컬에서 확인할 때는 ES Module의 보안 정책 때문에 `file://`보다 정적 HTTP 서버를 사용하는 것을 권장합니다.
 
-예:
-
 ```bash
 python3 -m http.server 8000
 ```
@@ -241,7 +288,8 @@ python3 -m http.server 8000
 4. 외부 API/실시간 통신이면 `js/services/`에 추가
 5. 세션 상태면 `js/state.js`에 추가
 6. `js/app.js`에는 마지막 조립/이벤트 연결만 추가
-7. 스타일은 inline `<style>`이나 HTML `style="..."` 대신 `css/`에 추가
+7. 스타일은 `css/`에 추가
+8. PC 전용 presentation만 `css/desktop.css`에 추가
 
 ### 금지 사항
 
@@ -249,6 +297,7 @@ python3 -m http.server 8000
 - `index.html`에 새로운 대규모 `<script>` 추가
 - 페이지 파일에서 Telegram WebApp API 직접 호출
 - 테스트 데이터와 화면 렌더링 로직을 한 파일에 계속 누적
+- `pc.html`에 앱 로직 복제
 - 실제 잔액/정산을 브라우저 JavaScript에서 신뢰하는 구조
 
 ## Tech Stack
@@ -276,6 +325,8 @@ python3 -m http.server 8000
 - [x] CSS external module화
 - [x] JS page/component/service module화
 - [x] Game / Betting / i18n data 분리
+- [x] PC와 모바일 앱 로직 공유
+- [x] architecture / AI / contribution 문서 동기화
 
 ### Phase 2 — Backend
 
