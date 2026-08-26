@@ -1,80 +1,112 @@
 # Real Money: Live Game
 
-Telegram Mini App 기반의 **Live Game / Mini Game 테스트용 웹 UI 프로토타입**입니다.
+> **Prototype / Test Version** — Telegram Mini App + PC Web Preview
 
-> ⚠️ **현재 프로젝트는 테스트 버전입니다.**
->
-> 실제 현금 거래, 결제, 충전, 출금, 실제 베팅 정산은 아직 연결되어 있지 않습니다. 현재의 Live Room, 투표, 채팅, 베팅 기능은 UI/UX와 상태 흐름을 검증하기 위한 테스트 모드입니다.
+이 저장소는 Live Game / Mini Game 서비스의 **UI/UX 및 상태 흐름을 검증하는 테스트용 웹 프로토타입**입니다.
 
-## 📌 프로젝트 목적
+현재 실제 현금 거래, 결제, 충전, 출금, 실제 베팅 정산은 연결되어 있지 않습니다.
 
-실제 서비스 개발에 앞서 다음과 같은 프론트엔드 화면과 사용자 흐름을 테스트합니다.
+## 빠른 문서 안내
 
-- Telegram Mini App UI
-- Telegram 사용자 프로필 표시
-- 한국어 / 中文 / English UI
-- Live Game / Live Room
-- 외부 Live Stream 표시
-- 테스트용 Player / Banker 투표
-- 테스트용 Live Chat
-- 테스트용 Baccarat Betting UI
-- Mini Game 메뉴
-- 모바일 한손 조작 UX
-- Telegram Back Button
-- Netlify 정적 배포
+README를 하나의 거대한 문서로 유지하지 않고 주제별 문서로 나눕니다.
 
-## 🧪 현재 버전
+| 문서 | 내용 |
+|---|---|
+| [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) | AI가 코드를 수정할 때 지켜야 할 최상위 규칙 |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | 사람/AI 공통 개발 규칙 |
+| [`CHANGELOG.md`](CHANGELOG.md) | 프로젝트 변경 이력 |
+| [`docs/architecture.md`](docs/architecture.md) | 전체 아키텍처와 모듈 관계 |
+| [`docs/platforms.md`](docs/platforms.md) | PC Web과 Telegram Mini App의 차이/공통 구조 |
+| [`docs/development.md`](docs/development.md) | 기능 수정 및 리팩터링 절차 |
+| [`docs/deployment.md`](docs/deployment.md) | Netlify/GitHub Pages 배포 정책 |
+| [`docs/decisions/`](docs/decisions/) | 중요한 제품/기술 결정 기록 |
 
-**Status: Prototype / Test Version**
+각 기능 폴더의 `README.md`는 **그 모듈만 확인하고 수정할 수 있도록** 책임과 경계를 설명합니다.
 
-### 구현 / 테스트 대상
+## 🖥️ 플랫폼 구조
 
-- [x] Telegram Mini App 기본 연동
-- [x] Telegram 사용자 이름 / ID / 프로필 이미지
-- [x] 한국어 / 中文 / English UI
-- [x] 언어 자동 감지
-- [x] Home / Live / Mini Game / Profile
-- [x] Live Game 스트리밍 영역
-- [x] Live Room 구조
-- [x] Live Room 두 번째 스트림 `https://vdo.ninja/?view=EnemyDriveL`
-- [x] 모바일 Live Stream 자동재생 요청 및 inline 재생 설정
-- [x] Player / Banker 테스트 투표 비율
-- [x] 테스트 Live Chat
-- [x] 4개 테스트 닉네임 자동 `test` 메시지
-- [x] 우측 하단 원형 Chat 액션 버튼
-- [x] 우측 하단 원형 Betting 액션 버튼
-- [x] Bottom Sheet 방식 Betting Panel
-- [x] Player / Banker / Tie
-- [x] Player Pair / Banker Pair
-- [x] Dragon 7 / Panda 8 사이드 베팅
-- [x] 칩 `1 / 5 / 10 / 50 / 100 / 1000`
-- [x] 직접 금액 입력
-- [x] MAX 버튼
-- [x] 베팅 누적 및 총액 표시
-- [x] 베팅 확인 팝업
-- [x] 확인 후 Betting Panel 닫기
+코드를 PC용과 Telegram용으로 두 벌 복제하지 않습니다.
 
-## 🎰 Live Room
+```text
+                 Shared Source
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+      PC Web UI             Telegram Mini App
+       pc.html                 index.html
+          │                       │
+          └───────────┬───────────┘
+                      │
+              shared src / styles
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+      Live         Betting        Chat
+        │             │             │
+        └─────────────┴─────────────┘
+```
+
+- `index.html` — Telegram Mini App / 모바일 우선 진입점
+- `pc.html` — PC 브라우저에서 바로 확인하는 Web Preview 진입점
+- `src/` — 실제 기능 로직은 두 환경이 공유
+- `styles/mobile.css` — 모바일/Telegram 레이아웃
+- `styles/desktop.css` — PC 레이아웃
+- `styles/live.css`, `betting.css`, `chat.css` — 기능 공통 스타일
+
+PC에서는 더 이상 F12 모바일 에뮬레이션만 의존하지 않고 `pc.html`로 데스크톱 UI를 직접 확인합니다. F12는 추가적인 반응형 검증용으로 사용합니다.
+
+## 📱 Telegram Mini App
+
+Telegram 환경에서는 모바일 한손 조작을 최우선으로 합니다.
+
+- Safe Area 대응
+- `100dvh` 기반 viewport
+- 하단 고정 Navigation
+- Live Room 원형 Floating Action
+- Betting Bottom Sheet
+- Chat 입력/전송 UX
+- Telegram WebApp API / Back Button
+- 스트리밍 inline/autoplay 요청
+
+Telegram API가 없는 일반 브라우저에서도 개발 화면이 깨지지 않도록 fallback을 유지합니다.
+
+## 🖥️ PC Web Preview
+
+PC에서는 넓은 화면을 활용하는 별도 레이아웃을 사용합니다.
+
+- 고정된 모바일 폭을 PC에 억지로 확대하지 않음
+- Live 스트림을 넓은 화면에 맞게 배치
+- Chat / Betting 영역의 데스크톱 사용성 개선
+- 마우스 hover 및 큰 터치 영역에 의존하지 않는 일반 웹 UX
+- 동일한 Live / Betting / Chat 로직 공유
+
+## 🎥 Live Room
 
 Live Game의 스트리밍을 선택하면 Live Room으로 진입합니다.
 
 ```text
-Topbar: Profile / Name / ID / Balance / Deposit / Withdraw
-        ↓
-Live Stream 1
-        ↓
-Live Stream 2 (EnemyDriveL)
-        ↓
-Player / Banker test vote
-        ↓
-Live Chat
-        ↓
-Floating Betting / Chat buttons
+Profile / Name / ID / Balance / Deposit / Withdraw
+                    ↓
+               Live Stream 1
+                    ↓
+       Live Stream 2 (EnemyDriveL)
+                    ↓
+          Player / Banker Test Vote
+                    ↓
+                Live Chat
+                    ↓
+          Betting / Chat Actions
 ```
+
+두 번째 테스트 스트림:
+
+`https://vdo.ninja/?view=EnemyDriveL`
+
+자동재생은 브라우저 정책상 항상 보장되지 않으므로 `autoplay`, `muted`, `playsinline` 및 사용자 재생 fallback을 함께 고려합니다.
 
 ### Test Vote
 
-현재 Player / Banker 영역은 실제 투표 서버가 아니라 테스트용 랜덤 상태입니다. Live Room 진입 시 테스트 비율을 생성하며 실제 베팅 결과와 연결되지 않습니다.
+Player / Banker 영역은 현재 실제 투표 서버가 아니라 테스트용 랜덤 상태입니다.
 
 ### Test Chat
 
@@ -87,11 +119,9 @@ Floating Betting / Chat buttons
 
 실제 Backend 채팅이 아니며 브라우저 세션 안에서만 동작합니다.
 
-## 💰 Baccarat Betting Test Mode
+## 💰 Baccarat Betting — Test Mode
 
-현재 Betting Panel은 **실제 금전 베팅이 아닌 테스트 UI**입니다.
-
-### Betting options
+현재 Betting은 실제 금전 베팅이 아닌 UI/상태 흐름 검증용입니다.
 
 | 베팅 | 표시 배당 |
 |---|---:|
@@ -103,148 +133,122 @@ Floating Betting / Chat buttons
 | Dragon 7 | 40:1 |
 | Panda 8 | 25:1 |
 
-Dragon 7과 Panda 8은 사이드 베팅으로 구분합니다.
+Dragon 7 / Panda 8은 사이드 베팅입니다.
 
 ### Chips
 
-```text
-1 / 5 / 10 / 50 / 100 / 1000
-```
+`1 / 5 / 10 / 50 / 100 / 1000`
 
-칩을 선택한 뒤 베팅 영역을 눌러 금액을 올립니다. 같은 베팅 영역을 여러 번 선택하면 금액이 누적됩니다. 직접 금액 입력과 `MAX`도 지원합니다.
+칩 선택, 베팅 누적, 직접 금액 입력, `MAX`, 확인 팝업 및 확인 후 패널 닫기를 지원합니다.
 
-### Banker payout / commission rule
+### Banker 5% Commission Test Rule
 
-실제 카지노식 Banker 5% 커미션 방식의 테스트 정산을 사용합니다.
-
-사용자가 **10P를 Banker에 베팅하고 Banker가 승리하면 총 반환액은 19P**입니다.
+사용자가 지정한 카지노식 Banker 5% 커미션 모델을 기준으로 합니다.
 
 ```text
-10P 베팅
-→ 원금 10P + 순이익 9P
-→ 총 반환 19P
-
-20P 베팅
-→ 원금 20P + 순이익 19P
-→ 총 반환 39P
+10P → 총 반환 19P
+20P → 총 반환 39P
 ```
 
-즉 Banker 승리 시 순이익은 베팅액의 95%이며, 반환액은 **베팅 원금 + 95% 순이익**입니다. 실제 운영 Backend에서는 금액을 floating point로 계산하지 않고 정수 기반으로 검증/정산해야 합니다.
+현재 실제 잔액 차감/지급은 없습니다. 상세 결정은 [`docs/decisions/001-banker-commission.md`](docs/decisions/001-banker-commission.md)를 참고합니다.
 
-소수점이 없는 Point 시스템을 유지하기 위해 실제 운영 단계에서는 Banker 베팅 금액의 최소 단위를 5P로 제한하는 방식을 권장합니다. 그러면 5% 커미션 적용 후에도 정산액이 항상 정수가 됩니다.
+## 💳 Balance / Cash
 
-> **중요:** 현재 `index.html`의 Betting Test Mode는 실제 잔액을 차감하거나 실제 지급을 수행하지 않습니다. 위 규칙은 향후 Backend 정산 로직의 명세로 사용합니다.
+Balance / Point, 충전, 출금은 현재 UI 테스트 영역입니다.
 
-### Tie 처리 기준
+실제 운영에서는 서버가 잔액과 거래 원장을 관리하고 클라이언트가 잔액이나 베팅 결과를 결정하지 않도록 해야 합니다.
 
-향후 실제 게임 서버를 연결할 때 일반적인 바카라 규칙을 기준으로 Player / Banker 베팅은 Tie 결과에서 Push(원금 반환), Tie 베팅은 해당 배당으로 정산하는 구조를 사용합니다. 실제 서비스 적용 전에는 최종 게임 규칙과 라이선스/규제 요구사항을 확정해야 합니다.
+## 🕹️ Mini Games
 
-## 🧩 Betting UI UX
+Mini Game 메뉴는 UI 및 화면 이동 테스트 목적입니다. 프로젝트 자체에서 실제 게임머니나 결과를 처리하지 않습니다.
 
-- 한 손 조작을 고려한 하단 Bottom Sheet
-- 오른손 엄지 접근성을 고려한 우측 하단 원형 Betting 버튼
-- 우측 하단 Chat 버튼을 이용한 메시지 전송
-- 선택 칩 표시
-- 선택 베팅 및 총액 표시
-- 직접 입력 / MAX
-- 확인 팝업
-- 확인 완료 후 Betting Panel 자동 닫힘
-- 모바일 safe-area 대응
+## 🌐 Languages
 
-## 💳 Balance / Cash 안내
+현재 UI:
 
-현재 화면의 Balance / Point는 UI 테스트 영역입니다. 실제 잔액, 충전, 출금, 결제, 베팅 원장 및 금융 거래는 구현되어 있지 않습니다.
+- 한국어 `ko`
+- 中文 `cn`
+- English `en`
 
-프로덕션에서는 서버에서 잔액과 거래 원장을 관리하고, 클라이언트가 임의로 잔액이나 베팅 결과를 결정하지 못하도록 해야 합니다.
+추가 예정:
 
-## 🕹️ Mini Game
-
-Mini Game 메뉴는 UI 및 화면 이동 테스트 목적입니다. 일부 게임은 외부 테스트 페이지로 연결되며 프로젝트 자체에서 실제 게임머니나 결과를 처리하지 않습니다.
-
-## 🌐 Supported Languages
-
-| Language | Code | Status |
-|---|---|---|
-| 한국어 | `ko` | ✅ |
-| 中文 | `cn` | ✅ |
-| English | `en` | ✅ |
-| 日本語 | `ja` | 🚧 |
-| Español | `es` | 🚧 |
-| Русский | `ru` | 🚧 |
-| Français | `fr` | 🚧 |
-| Deutsch | `de` | 🚧 |
-| Português | `pt` | 🚧 |
+- 日本語 `ja`
+- Español `es`
+- Русский `ru`
+- Français `fr`
+- Deutsch `de`
+- Português `pt`
 
 ## 🛠️ Tech Stack
 
 - HTML5
 - CSS
 - JavaScript
-- Tailwind CSS CDN
 - Telegram Mini Apps
-- Firebase dependency 준비
+- Tailwind CSS CDN (현재 레거시/프로토타입 의존성)
 - Netlify
+- GitHub Pages / PC Preview
 
-현재 프로젝트는 별도의 복잡한 빌드 과정 없이 정적 웹사이트 형태로 구성되어 있습니다.
-
-```bash
-npm install
-npm run build
-```
+정적 웹사이트 구조를 유지하며, 복잡한 빌드 시스템에 의존하지 않는 것을 현재 원칙으로 합니다.
 
 ## 📁 Project Structure
 
 ```text
 real-money-live-game-web/
 │
-├── index.html
-├── README.md
-├── netlify.toml
-├── package.json
-├── package-lock.json
-├── .gitignore
+├── index.html                 # Telegram / Mobile entry
+├── pc.html                    # PC Web Preview entry
+├── README.md                  # Project overview
+├── AI_INSTRUCTIONS.md         # AI development rules
+├── CONTRIBUTING.md            # Contribution rules
+├── CHANGELOG.md               # Change history
 │
-├── game1.png
-├── game2.jpeg
-├── 1.png
-├── 2.png
-├── 3.png
-├── 4.png
-└── 5.png / 6.png
+├── docs/
+│   ├── architecture.md
+│   ├── platforms.md
+│   ├── development.md
+│   ├── deployment.md
+│   └── decisions/
+│
+├── src/
+│   ├── core/
+│   ├── shared/
+│   ├── live/
+│   ├── betting/
+│   ├── telegram/
+│   ├── profile/
+│   ├── mini-games/
+│   └── i18n/
+│
+├── styles/
+│   ├── base.css
+│   ├── mobile.css
+│   ├── desktop.css
+│   ├── layout.css
+│   ├── live.css
+│   ├── betting.css
+│   └── chat.css
+│
+└── assets/
 ```
 
-향후 Betting 이미지가 추가되면 다음 규칙을 사용합니다.
+모듈별 책임은 각 폴더의 `README.md`에서 관리합니다.
 
-```text
-bet-player.png
-bet-tie.png
-bet-banker.png
-bet-player-pair.png
-bet-banker-pair.png
-bet-dragon7.png
-bet-panda8.png
-chip-1.png
-chip-5.png
-chip-10.png
-chip-50.png
-chip-100.png
-chip-1000.png
-```
-
-현재 대부분의 UI 및 JavaScript 로직은 `index.html`에 포함되어 있습니다.
-
-## 🚧 Development Roadmap
+## 🚧 Roadmap
 
 ### Phase 1 — UI Prototype
 
 - [x] Telegram Mini App UI
+- [x] PC Web Preview architecture documented
 - [x] 다국어
-- [x] Live Game
-- [x] Live Room
-- [x] Test Chat
-- [x] Test Vote
+- [x] Live Game / Live Room
+- [x] Test Chat / Test Vote
 - [x] Test Baccarat Betting UI
-- [x] Banker 5% commission payout rule documented
+- [x] Banker 5% commission rule documented
+- [ ] Inline CSS 완전 제거 및 external CSS 적용
+- [ ] PC/Mobile stylesheet 분리 완료
+- [ ] Live JavaScript 모듈화
+- [ ] Betting JavaScript 모듈화
 
 ### Phase 2 — Backend
 
@@ -254,15 +258,13 @@ chip-1000.png
 - [ ] 사용자 관리
 - [ ] Wallet / Balance 서버 관리
 - [ ] Transaction Ledger
-- [ ] 실시간 Chat
-- [ ] 실시간 Vote
+- [ ] 실시간 Chat / Vote
 - [ ] 관리자 페이지
 
 ### Phase 3 — Game System
 
 - [ ] 실제 게임 서버
 - [ ] 게임 라운드 관리
-- [ ] 게임 결과 검증
 - [ ] 서버 기반 베팅 검증
 - [ ] Banker commission 정산
 - [ ] Tie / Pair / Dragon 7 / Panda 8 정산
@@ -272,8 +274,7 @@ chip-1000.png
 - [ ] 서버 권한 검증
 - [ ] Audit Log
 - [ ] 부정행위 방지
-- [ ] 모니터링
-- [ ] 장애 복구
+- [ ] 모니터링 / 장애 복구
 - [ ] 운영 환경 테스트
 - [ ] 관련 법규 / 라이선스 검토
 
@@ -281,16 +282,12 @@ chip-1000.png
 
 이 저장소는 테스트 및 프로토타입 목적으로 제작되었습니다. 현재 화면에서 실제 현금, 실제 포인트, 실제 베팅, 실제 정산은 처리하지 않습니다.
 
-프로덕션 서비스로 사용하기 위해서는 별도의 Backend, Authentication, Database, Transaction System, Game Server, 보안 시스템 및 관련 규제 검토가 필요합니다.
+프로덕션 서비스로 사용하기 위해서는 Backend, Authentication, Database, Transaction System, Game Server, 보안 시스템 및 관련 규제 검토가 필요합니다.
 
 ## 📄 License
 
-현재 프로젝트는 테스트 및 개발 목적으로 사용됩니다.
+현재 프로젝트는 테스트 및 개발 목적으로 사용됩니다. 별도의 라이선스 정책이 확정되기 전까지 소스 및 리소스를 임의의 상업적 용도로 사용하는 것을 권장하지 않습니다.
 
-별도의 라이선스 정책이 확정되기 전까지 프로젝트의 소스 및 리소스를 임의의 상업적 용도로 사용하는 것을 권장하지 않습니다.
-
-## 👨‍💻 Status
+## Status
 
 **Current Status: `Prototype / Test Version`**
-
-Backend 및 실제 서비스 기능은 향후 개발 단계에서 별도로 구현될 예정입니다.
