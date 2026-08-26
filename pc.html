@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090909">
+  <title>Real Money Live Game — PC Preview</title>
+  <link rel="stylesheet" href="styles/desktop.css">
+  <style>
+    html,body{margin:0;min-height:100%;background:#050505;color:#fff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .pc-preview{min-height:100vh;display:flex;flex-direction:column}
+    .pc-preview__bar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#0c0c0c;border-bottom:1px solid #252525;box-sizing:border-box}
+    .pc-preview__brand{font-weight:900;letter-spacing:.2px}
+    .pc-preview__badge{font-size:11px;color:#d4af37;border:1px solid #4b3b13;border-radius:999px;padding:5px 9px}
+    .pc-preview__stage{flex:1;min-height:0;padding:18px;box-sizing:border-box}
+    .pc-preview__frame{width:100%;height:calc(100vh - 88px);min-height:620px;border:1px solid #292929;border-radius:16px;background:#090909;box-shadow:0 15px 50px #000;overflow:hidden}
+    .pc-preview__frame iframe{width:100%;height:100%;border:0;display:block;background:#090909}
+    @media(max-width:760px){.pc-preview__bar{padding:0 12px}.pc-preview__stage{padding:0}.pc-preview__frame{height:100vh;min-height:0;border:0;border-radius:0}}
+  </style>
+</head>
+<body>
+  <div class="pc-preview">
+    <header class="pc-preview__bar">
+      <div class="pc-preview__brand">Real Money: Live Game</div>
+      <div class="pc-preview__badge">PC / WEB PREVIEW</div>
+    </header>
+    <main class="pc-preview__stage">
+      <div class="pc-preview__frame">
+        <iframe id="app-frame" src="index.html" title="Real Money Live Game PC Preview"></iframe>
+      </div>
+    </main>
+  </div>
+  <script>
+    const frame=document.getElementById('app-frame');
+    frame.addEventListener('load',()=>{
+      try{
+        const doc=frame.contentDocument;
+        const link=doc.createElement('link');
+        link.rel='stylesheet';
+        link.href='styles/desktop.css';
+        link.dataset.platform='desktop-preview';
+        doc.head.appendChild(link);
+        doc.documentElement.dataset.platform='desktop';
+      }catch(e){console.warn('Desktop preview styling could not be injected.',e)}
+    });
+  </script>
+</body>
+</html>
