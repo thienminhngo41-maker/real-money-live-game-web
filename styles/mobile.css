@@ -1,12 +1,23 @@
-/* Mobile / Telegram layout module
- *
- * This file is the target for mobile-only layout rules during the CSS migration.
- * Keep feature rules in live.css, betting.css and chat.css when they are platform-independent.
+/* Mobile / Telegram layout module.
+ * Platform-only rules live here; feature rules remain in live.css, betting.css and chat.css.
  */
+:root{--app-max-width:430px;--bottom-nav-height:62px}
 
-:root {
-  --app-max-width: 430px;
-  --bottom-nav-height: 62px;
+html,body{width:100%;min-width:320px}
+body{overscroll-behavior:none;-webkit-overflow-scrolling:touch}
+main{width:100%;max-width:var(--app-max-width)}
+.topbar{width:100%}
+.bottom{min-height:calc(var(--bottom-nav-height) + env(safe-area-inset-bottom,0px))}
+.float-stack{bottom:calc(var(--bottom-nav-height) + env(safe-area-inset-bottom,0px) + 14px)}
+
+@media(max-width:360px){
+  :root{--bottom-nav-height:58px}
+  main{padding-left:8px;padding-right:8px}
 }
 
-/* Migration note: move mobile-only rules from index.html here incrementally. */
+@media(min-width:431px){
+  body{background:#050505}
+  main{max-width:430px;margin-left:auto;margin-right:auto;background:#090909;min-height:100dvh;box-shadow:0 0 50px rgba(0,0,0,.45)}
+  .topbar{max-width:430px;left:50%;right:auto;transform:translateX(-50%)}
+  .bottom{max-width:430px;left:50%;right:auto;transform:translateX(-50%)}
+}
