@@ -2,6 +2,17 @@
 
 ## 2026-08-26
 
+### Documentation restructure
+- Rewrote the root `README.md` to describe the current prototype architecture, features, local run flow, security boundary, deployment model, and documentation map.
+- Updated `docs/architecture.md` to match the current `app.js` / pages / components / domains / services structure.
+- Reworked `docs/development.md` around the current module-first workflow and manual verification flow.
+- Clarified the static Netlify deployment model in `docs/deployment.md`.
+- Updated `AI_INSTRUCTIONS.md` so AI-assisted changes follow the current module boundaries and documentation sync rules.
+- Added `docs/security.md` for authentication, balance, transaction, betting and secret-handling boundaries.
+- Added `docs/betting.md` for the current Betting TEST MODE and production server boundary.
+- Added `docs/live-room.md` for Live Room lifecycle, stream, chat, vote and betting responsibilities.
+- Added `docs/chat.md` for the current test Chat implementation and production considerations.
+
 ### Project structure
 - Added `AI_INSTRUCTIONS.md` for AI-assisted development.
 - Added module-level README files.
@@ -21,14 +32,11 @@
 - Consolidated `1.png` through `6.png`, `game1.png`, and `game2.jpeg`.
 
 ### UI fixes
-- Fixed the initial `준비중` modal appearing on page load by explicitly honoring the HTML `hidden` state with `.popup[hidden]{display:none}`.
-- Strengthened the hidden-modal rule with `#popup[hidden]{display:none!important}`.
-- Stabilized the Telegram profile topbar with a grid layout so profile, balance, deposit, and withdrawal controls stay horizontally aligned on narrow Chrome/Telegram viewports.
-- Added tighter narrow-screen sizing for the topbar and preserved text truncation for long names/IDs.
+- Fixed the initial `준비중` modal appearing on page load by explicitly honoring the HTML `hidden` state.
+- Stabilized the Telegram profile topbar for narrow Chrome/Telegram viewports.
 - Added a profile-avatar fallback when Telegram does not provide `photo_url` or the image fails to load.
-- Preserved the existing deposit, withdrawal, balance, name, and ID controls while preventing them from collapsing into the profile area.
-- Fixed the root cause of the broken topbar: `#topbar` was rendered without the `.topbar` class, so the grid/fixed-position layout rules were never applied.
-- Made modal visibility explicit in JavaScript so the popup is `display:none` until `openModal()` is called, independent of browser CSS handling of `[hidden]`.
+- Fixed the root cause of the broken topbar: `#topbar` was rendered without the `.topbar` class.
+- Made modal visibility explicit in JavaScript so the popup remains hidden until `openModal()` is called.
 
 ### Live Room
 - Documented Live Stream / Live Room responsibilities.
@@ -39,4 +47,4 @@
 - Documented Banker 5% commission test payout.
 - Documented test-mode boundary between UI and future server settlement.
 
-> This changelog records project-level changes. Feature-specific behavior belongs in the relevant module README.
+> This changelog records project-level changes. Feature-specific behavior belongs in the relevant documentation.
