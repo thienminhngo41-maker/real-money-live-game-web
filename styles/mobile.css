@@ -1,0 +1,12 @@
+/* Mobile / Telegram layout module
+ *
+ * This file is the target for mobile-only layout rules during the CSS migration.
+ * Keep feature rules in live.css, betting.css and chat.css when they are platform-independent.
+ */
+
+:root {
+  --app-max-width: 430px;
+  --bottom-nav-height: 62px;
+}
+
+/* Migration note: move mobile-only rules from index.html here incrementally. */
