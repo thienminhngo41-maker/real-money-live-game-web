@@ -11,12 +11,12 @@ PC 브라우저와 Telegram Mini App에서 모두 자연스럽게 보이도록 �
 ```text
 index.html (Telegram / Mobile)
           │
-          ├──────── shared src ────────┐
-          │                             │
-pc.html (PC Preview)                    │
-          │                             │
-          └──────── shared styles ──────┘
+          ├──────── shared source / feature logic ────────┐
+          │                                                │
+pc.html (PC Preview) ── loads index.html + desktop.css ───┘
 ```
+
+`pc.html`은 PC 전용 기능을 복제한 두 번째 앱이 아니라 **동일한 앱을 데스크톱 레이아웃으로 검증하기 위한 Preview entry**입니다. 이를 통해 Live / Betting / Chat의 기능 코드를 두 벌로 유지하는 문제를 피합니다.
 
 ## Entry points
 
@@ -38,11 +38,15 @@ Telegram API가 없는 일반 브라우저에서도 개발용 fallback을 유지
 
 PC 브라우저에서 별도의 F12 모바일 에뮬레이션 없이 데스크톱 UI를 확인하기 위한 진입점입니다.
 
+- `index.html`을 동일-origin iframe으로 로드
+- iframe 내부에 `styles/desktop.css`를 주입
+- 동일한 HTML/JavaScript와 상태 흐름 사용
 - 넓은 화면 활용
 - Live stream desktop layout
 - Chat / Betting desktop layout
 - mouse/keyboard friendly controls
-- 동일한 `src/` 기능 로직 사용
+
+이 방식은 현재 프로토타입을 안전하게 검증하기 위한 단계이며, 향후 JavaScript 모듈화가 완료되면 별도 iframe 의존 없이 공통 앱 부트스트랩을 공유하는 구조로 발전시킬 수 있습니다.
 
 ## CSS split
 
@@ -58,6 +62,8 @@ styles/
 ```
 
 `live.css`, `betting.css`, `chat.css`는 가능한 한 플랫폼에 독립적으로 유지합니다. 플랫폼 차이는 `mobile.css`와 `desktop.css`에서 덮어씁니다.
+
+현재 `index.html`에는 레거시 inline CSS가 남아 있습니다. **inline CSS 완전 제거는 별도의 마이그레이션 단계**에서 진행하며, 기존 화면을 깨뜨리지 않도록 스타일 블록을 기능별 파일로 옮긴 뒤 마지막에 제거합니다.
 
 ## Responsive rule
 
