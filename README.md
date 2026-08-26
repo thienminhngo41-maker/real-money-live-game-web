@@ -2,125 +2,196 @@
 
 > **Prototype / Test Version** — Telegram Mini App + PC Web Preview
 
-이 저장소는 Live Game / Mini Game 서비스의 **UI/UX 및 상태 흐름을 검증하는 테스트용 웹 프로토타입**입니다.
+Live Game / Mini Game 서비스의 UI/UX와 상태 흐름을 검증하는 정적 웹 프로토타입입니다. 현재 실제 현금 거래, 결제, 충전, 출금, 실제 베팅 정산은 연결되어 있지 않습니다.
 
-현재 실제 현금 거래, 결제, 충전, 출금, 실제 베팅 정산은 연결되어 있지 않습니다.
+## 이번 구조 개편
 
-## 빠른 문서 안내
+기존에는 `index.html` 하나에 HTML, 대량의 inline CSS, 데이터, 화면 전환, Telegram 연동, Chat, Vote, Betting 로직이 집중되어 있었습니다. 이번 리팩터링에서는 **HTML은 앱 셸**, **CSS는 기능별 스타일**, **JS는 페이지/컴포넌트/서비스**, **게임·베팅 데이터는 data**로 분리했습니다.
 
-README를 하나의 거대한 문서로 유지하지 않고 주제별 문서로 나눕니다.
+### 핵심 원칙
 
-| 문서 | 내용 |
-|---|---|
-| [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) | AI가 코드를 수정할 때 지켜야 할 최상위 규칙 |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | 사람/AI 공통 개발 규칙 |
-| [`CHANGELOG.md`](CHANGELOG.md) | 프로젝트 변경 이력 |
-| [`docs/architecture.md`](docs/architecture.md) | 전체 아키텍처와 모듈 관계 |
-| [`docs/platforms.md`](docs/platforms.md) | PC Web과 Telegram Mini App의 차이/공통 구조 |
-| [`docs/development.md`](docs/development.md) | 기능 수정 및 리팩터링 절차 |
-| [`docs/deployment.md`](docs/deployment.md) | Netlify/GitHub Pages 배포 정책 |
-| [`docs/decisions/`](docs/decisions/) | 중요한 제품/기술 결정 기록 |
+- `index.html`은 진입점과 DOM mount point만 담당
+- `css/`는 스타일만 담당
+- `data/`는 변경 가능한 게임/베팅/번역 데이터를 담당
+- `js/components/`는 재사용 UI를 담당
+- `js/pages/`는 화면 렌더링을 담당
+- `js/services/`는 Telegram/Chat/Betting 같은 기능을 담당
+- `js/state.js`는 브라우저 세션 상태를 한곳에서 관리
+- `js/app.js`는 조립과 이벤트 연결만 담당
+- 실제 잔액/정산은 클라이언트에서 결정하지 않음
 
-각 기능 폴더의 `README.md`는 **그 모듈만 확인하고 수정할 수 있도록** 책임과 경계를 설명합니다.
-
-## 🖥️ 플랫폼 구조
-
-코드를 PC용과 Telegram용으로 두 벌 복제하지 않습니다.
+## Project Structure
 
 ```text
-                 Shared App
-                      │
-          ┌───────────┴───────────┐
-          │                       │
-      PC Web Preview        Telegram Mini App
-        pc.html                 index.html
-          │                       │
-          └───────────┬───────────┘
-                      │
-              shared src / styles
-                      │
-        ┌─────────────┼─────────────┐
-        │             │             │
-      Live         Betting        Chat
+real-money-live-game-web/
+│
+├── index.html
+├── pc.html
+├── README.md
+├── AI_INSTRUCTIONS.md
+├── CONTRIBUTING.md
+├── CHANGELOG.md
+│
+├── css/
+│   ├── variables.css       # Theme / safe-area variables
+│   ├── base.css            # Reset / common rules
+│   ├── layout.css          # Header / main / bottom navigation
+│   ├── components.css      # Hero / cards / modal / floating actions
+│   ├── live.css            # Live / Room / Vote / Chat
+│   ├── betting.css         # Betting bottom sheet
+│   └── profile.css         # Profile screen
+│
+├── data/
+│   ├── games.js            # Games / providers / featured content
+│   ├── betting.js          # Bet options / chips / test payout rules
+│   └── i18n.js             # ko / cn / en translations
+│
+├── js/
+│   ├── app.js              # Application composition / event delegation
+│   ├── state.js            # Client-side session state
+│   │
+│   ├── components/
+│   │   ├── topbar.js
+│   │   ├── bottomNav.js
+│   │   ├── modal.js
+│   │   └── bettingSheet.js
+│   │
+│   ├── pages/
+│   │   ├── router.js
+│   │   ├── home.js
+│   │   ├── live.js
+│   │   ├── room.js
+│   │   ├── mini.js
+│   │   └── profile.js
+│   │
+│   └── services/
+│       ├── telegram.js      # Telegram WebApp + browser fallback
+│       ├── chat.js          # Test chat simulation
+│       └── betting.js       # Betting state operations
+│
+└── assets/                  # Existing images / static resources
 ```
 
-- `index.html` — Telegram Mini App / 모바일 우선 진입점
-- `pc.html` — 동일한 `index.html`을 PC 레이아웃으로 확인하는 Preview 진입점
-- `src/` — 실제 기능 로직은 두 환경이 공유
-- `styles/mobile.css` — 모바일/Telegram 레이아웃
-- `styles/desktop.css` — PC 레이아웃
-- `styles/live.css`, `betting.css`, `chat.css` — 기능 공통 스타일
+## Architecture
 
-PC에서는 더 이상 F12 모바일 에뮬레이션만 의존하지 않고 `pc.html`로 데스크톱 UI를 직접 확인합니다. F12는 추가적인 반응형 검증용으로 사용합니다.
+```text
+                         index.html
+                             │
+                         js/app.js
+                             │
+          ┌──────────────────┼──────────────────┐
+          │                  │                  │
+       components          pages             services
+          │                  │                  │
+   Topbar / Nav        Home / Live /      Telegram / Chat /
+   Modal / Betting     Room / Mini /      Betting
+                       Profile
+          │                  │                  │
+          └──────────────────┼──────────────────┘
+                             │
+                           state
+                             │
+                            data
+                 games / betting / i18n
+```
 
-## 📱 Telegram Mini App
+### `index.html`
 
-Telegram 환경에서는 모바일 한손 조작을 최우선으로 합니다.
+HTML 구조를 직접 길게 보관하지 않고 다음 mount point만 제공합니다.
 
-- Safe Area 대응
-- `100dvh` 기반 viewport
+- `#topbar`
+- `#app`
+- `#float-root`
+- `#bottom-nav`
+- `#modal-root`
+
+모든 애플리케이션 JavaScript는 `type="module"`로 `js/app.js`에서 시작합니다.
+
+### `js/app.js`
+
+앱의 composition root입니다. 컴포넌트와 페이지를 조립하고, `data-*` 이벤트를 연결합니다. 새로운 비즈니스 로직을 이 파일에 계속 추가하지 않는 것을 원칙으로 합니다.
+
+### `js/pages/`
+
+페이지는 DOM을 렌더링하지만 Telegram API나 직접적인 외부 서비스 호출을 담당하지 않습니다.
+
+- `home.js` — 홈
+- `live.js` — Live 목록
+- `room.js` — Live Room
+- `mini.js` — Mini Games
+- `profile.js` — Profile
+- `router.js` — 페이지 history / navigation
+
+### `js/components/`
+
+여러 페이지에서 재사용하거나 독립적으로 동작하는 UI입니다.
+
+### `js/services/`
+
+외부 시스템 또는 기능성 로직의 경계입니다.
+
+`telegram.js`는 Telegram WebApp API를 감싸고 일반 브라우저에서는 fallback을 제공합니다. `chat.js`와 `betting.js`는 현재 테스트 모드 구현입니다.
+
+프로덕션 Backend가 추가되면 API/WebSocket/인증 구현을 이 경계에 연결하는 것을 권장합니다.
+
+### `data/`
+
+화면 코드에서 하드코딩하던 변경 가능 데이터를 분리했습니다. 게임 URL을 변경하거나 배당 표시를 변경할 때 페이지 코드를 수정할 필요가 없습니다.
+
+## Platform
+
+### Telegram Mini App
+
+- Safe Area
+- `100dvh`
 - 하단 고정 Navigation
-- Live Room 원형 Floating Action
+- Live Room Floating Action
 - Betting Bottom Sheet
-- Chat 입력/전송 UX
 - Telegram WebApp API / Back Button
-- 스트리밍 inline/autoplay 요청
+- Live iframe autoplay 요청
 
-Telegram API가 없는 일반 브라우저에서도 개발 화면이 깨지지 않도록 fallback을 유지합니다.
+Telegram API가 없는 일반 브라우저에서도 앱이 실행되도록 fallback을 유지합니다.
 
-## 🖥️ PC Web Preview
+### PC Web Preview
 
-`pc.html`을 열면 별도의 F12 모바일 에뮬레이션 없이 PC 화면을 확인할 수 있습니다.
+`pc.html`은 기존 Preview 진입점으로 유지합니다. 공통 애플리케이션 모듈을 재사용하며 플랫폼별 레이아웃 차이는 페이지/스타일 계층에서 처리합니다.
 
-- 동일한 `index.html`을 재사용
-- PC 전용 `desktop.css`를 Preview iframe에 적용
-- 고정된 모바일 폭을 PC에 억지로 확대하지 않음
-- Live 스트림을 넓은 화면에 맞게 배치
-- Chat / Betting 영역의 데스크톱 사용성 개선
-- 동일한 Live / Betting / Chat 로직 공유
-
-## 🎥 Live Room
-
-Live Game의 스트리밍을 선택하면 Live Room으로 진입합니다.
+## Live Room
 
 ```text
-Profile / Name / ID / Balance / Deposit / Withdraw
-                    ↓
-               Live Stream 1
-                    ↓
-       Live Stream 2 (EnemyDriveL)
-                    ↓
-          Player / Banker Test Vote
-                    ↓
-                Live Chat
-                    ↓
-          Betting / Chat Actions
+Live List
+   ↓
+Selected Stream
+   ↓
+Second Test Stream
+   ↓
+Player / Banker Test Vote
+   ↓
+Test Chat
+   ↓
+Betting / Chat Actions
 ```
 
-두 번째 테스트 스트림:
-
-`https://vdo.ninja/?view=EnemyDriveL`
-
-자동재생은 브라우저 정책상 항상 보장되지 않으므로 `autoplay`, `muted`, `playsinline` 및 사용자 재생 fallback을 함께 고려합니다.
+두 번째 테스트 스트림은 `https://vdo.ninja/?view=EnemyDriveL`입니다.
 
 ### Test Vote
 
-Player / Banker 영역은 현재 실제 투표 서버가 아니라 테스트용 랜덤 상태입니다.
+서버 투표가 아니라 브라우저에서 생성되는 랜덤 테스트 상태입니다.
 
 ### Test Chat
 
-다음 테스트 닉네임이 랜덤 간격으로 `test` 메시지를 생성합니다.
+다음 테스트 사용자가 랜덤 간격으로 `test` 메시지를 생성합니다.
 
 - TestUser01
 - TestUser02
 - TestUser03
 - TestUser04
 
-실제 Backend 채팅이 아니며 브라우저 세션 안에서만 동작합니다.
+실제 Backend 채팅이 아니며 브라우저 세션에서만 동작합니다.
 
-## 💰 Baccarat Betting — Test Mode
+## Baccarat Betting — Test Mode
 
-현재 Betting은 실제 금전 베팅이 아닌 UI/상태 흐름 검증용입니다.
+현재 Betting은 UI/상태 흐름 검증용입니다.
 
 | 베팅 | 표시 배당 |
 |---|---:|
@@ -132,123 +203,79 @@ Player / Banker 영역은 현재 실제 투표 서버가 아니라 테스트용 
 | Dragon 7 | 40:1 |
 | Panda 8 | 25:1 |
 
-Dragon 7 / Panda 8은 사이드 베팅입니다.
+칩은 `1 / 5 / 10 / 50 / 100 / 1000`입니다. 칩 선택, 베팅 누적, 직접 금액 입력, `MAX`, 확인 팝업을 지원합니다.
 
-### Chips
+Banker 테스트 반환 규칙은 기존 프로토타입의 5% commission 모델을 유지합니다. 실제 잔액 차감이나 지급은 없습니다.
 
-`1 / 5 / 10 / 50 / 100 / 1000`
+## Languages
 
-칩 선택, 베팅 누적, 직접 금액 입력, `MAX`, 확인 팝업 및 확인 후 패널 닫기를 지원합니다.
-
-### Banker 5% Commission Test Rule
-
-사용자가 지정한 카지노식 Banker 5% 커미션 모델을 기준으로 합니다.
-
-```text
-10P → 총 반환 19P
-20P → 총 반환 39P
-```
-
-현재 실제 잔액 차감/지급은 없습니다. 상세 결정은 [`docs/decisions/001-banker-commission.md`](docs/decisions/001-banker-commission.md)를 참고합니다.
-
-## 💳 Balance / Cash
-
-Balance / Point, 충전, 출금은 현재 UI 테스트 영역입니다.
-
-실제 운영에서는 서버가 잔액과 거래 원장을 관리하고 클라이언트가 잔액이나 베팅 결과를 결정하지 않도록 해야 합니다.
-
-## 🕹️ Mini Games
-
-Mini Game 메뉴는 UI 및 화면 이동 테스트 목적입니다. 프로젝트 자체에서 실제 게임머니나 결과를 처리하지 않습니다.
-
-## 🌐 Languages
-
-현재 UI:
+현재 지원:
 
 - 한국어 `ko`
 - 中文 `cn`
 - English `en`
 
-추가 예정:
+언어 데이터는 `data/i18n.js`에서 관리합니다.
 
-- 日本語 `ja`
-- Español `es`
-- Русский `ru`
-- Français `fr`
-- Deutsch `de`
-- Português `pt`
+## Development
 
-## 🛠️ Tech Stack
+빌드 시스템 없이 브라우저에서 직접 실행할 수 있는 ES Module 구조를 유지합니다.
+
+로컬에서 확인할 때는 ES Module의 보안 정책 때문에 `file://`보다 정적 HTTP 서버를 사용하는 것을 권장합니다.
+
+예:
+
+```bash
+python3 -m http.server 8000
+```
+
+그 다음 브라우저에서 `http://localhost:8000/`으로 확인합니다.
+
+## Refactoring Rules
+
+새 기능을 추가할 때 다음 순서를 권장합니다.
+
+1. 변경 가능한 값이면 `data/`에 추가
+2. 재사용 UI면 `js/components/`에 추가
+3. 특정 화면이면 `js/pages/`에 추가
+4. 외부 API/실시간 통신이면 `js/services/`에 추가
+5. 세션 상태면 `js/state.js`에 추가
+6. `js/app.js`에는 마지막 조립/이벤트 연결만 추가
+7. 스타일은 inline `<style>`이나 HTML `style="..."` 대신 `css/`에 추가
+
+### 금지 사항
+
+- `index.html`에 새로운 대규모 `<style>` 추가
+- `index.html`에 새로운 대규모 `<script>` 추가
+- 페이지 파일에서 Telegram WebApp API 직접 호출
+- 테스트 데이터와 화면 렌더링 로직을 한 파일에 계속 누적
+- 실제 잔액/정산을 브라우저 JavaScript에서 신뢰하는 구조
+
+## Tech Stack
 
 - HTML5
 - CSS
-- JavaScript
+- Vanilla JavaScript ES Modules
 - Telegram Mini Apps
-- Tailwind CSS CDN (현재 레거시/프로토타입 의존성)
 - Netlify
 - GitHub Pages / PC Preview
 
-정적 웹사이트 구조를 유지하며, 복잡한 빌드 시스템에 의존하지 않는 것을 현재 원칙으로 합니다.
+기존 Tailwind CDN 의존성은 이번 구조 개편에서 제거했습니다. 현재 스타일은 프로젝트의 외부 CSS 모듈로 관리합니다.
 
-## 📁 Project Structure
-
-```text
-real-money-live-game-web/
-│
-├── index.html                 # Telegram / Mobile entry
-├── pc.html                    # PC Web Preview entry
-├── README.md                  # Project overview
-├── AI_INSTRUCTIONS.md         # AI development rules
-├── CONTRIBUTING.md            # Contribution rules
-├── CHANGELOG.md               # Change history
-│
-├── docs/
-│   ├── architecture.md
-│   ├── platforms.md
-│   ├── development.md
-│   ├── deployment.md
-│   └── decisions/
-│
-├── src/
-│   ├── core/
-│   ├── shared/
-│   ├── live/
-│   ├── betting/
-│   ├── telegram/
-│   ├── profile/
-│   ├── mini-games/
-│   └── i18n/
-│
-├── styles/
-│   ├── base.css
-│   ├── mobile.css
-│   ├── desktop.css
-│   ├── layout.css
-│   ├── live.css
-│   ├── betting.css
-│   └── chat.css
-│
-└── assets/
-```
-
-모듈별 책임은 각 폴더의 `README.md`에서 관리합니다.
-
-## 🚧 Roadmap
+## Roadmap
 
 ### Phase 1 — UI Prototype
 
 - [x] Telegram Mini App UI
 - [x] PC Web Preview entry
-- [x] PC/Mobile platform architecture documented
-- [x] 다국어
 - [x] Live Game / Live Room
 - [x] Test Chat / Test Vote
 - [x] Test Baccarat Betting UI
-- [x] Banker 5% commission rule documented
-- [x] Mobile / Desktop stylesheet foundation
-- [ ] Inline CSS 완전 제거 및 external CSS 적용
-- [ ] Live JavaScript 모듈화
-- [ ] Betting JavaScript 모듈화
+- [x] 다국어
+- [x] `index.html` 최소화
+- [x] CSS external module화
+- [x] JS page/component/service module화
+- [x] Game / Betting / i18n data 분리
 
 ### Phase 2 — Backend
 
@@ -278,16 +305,12 @@ real-money-live-game-web/
 - [ ] 운영 환경 테스트
 - [ ] 관련 법규 / 라이선스 검토
 
-## ⚠️ Important Notice
+## Important Notice
 
 이 저장소는 테스트 및 프로토타입 목적으로 제작되었습니다. 현재 화면에서 실제 현금, 실제 포인트, 실제 베팅, 실제 정산은 처리하지 않습니다.
 
-프로덕션 서비스로 사용하기 위해서는 Backend, Authentication, Database, Transaction System, Game Server, 보안 시스템 및 관련 규제 검토가 필요합니다.
-
-## 📄 License
-
-현재 프로젝트는 테스트 및 개발 목적으로 사용됩니다. 별도의 라이선스 정책이 확정되기 전까지 소스 및 리소스를 임의의 상업적 용도로 사용하는 것을 권장하지 않습니다.
+프로덕션 서비스로 사용하려면 Backend, Authentication, Database, Transaction System, Game Server, 보안 시스템 및 관련 규제 검토가 필요합니다.
 
 ## Status
 
-**Current Status: `Prototype / Test Version`**
+**Current Status: `Prototype / Modularized Frontend`**
