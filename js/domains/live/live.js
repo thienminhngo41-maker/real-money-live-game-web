@@ -14,8 +14,14 @@ export function randomizeVote(){
   if(bf)bf.style.width=`${b}%`;
 }
 
-export function openRoom(url,label,router){
-  state.room={url,label};
+export function openRoom(stream,label,router){
+  if(!stream?.boardUrl) return;
+  state.room={
+    key: stream.key,
+    label,
+    boardUrl: stream.boardUrl,
+    tableUrl: stream.tableUrl || ''
+  };
   state.history.push('live-room');
   router.show('live-room');
   haptic();
